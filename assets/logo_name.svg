@@ -1,19 +1,67 @@
-<svg width="360" height="120" viewBox="0 0 360 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Mark: white bg -->
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 299 120">
+  <!-- Generator: Adobe Illustrator 29.3.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 146)  -->
   <defs>
-    <clipPath id="c">
-      <rect width="120" height="120" rx="28"/>
+    <style>
+      .st0, .st1 {
+        fill: none;
+      }
+
+      .st2 {
+        fill: #111328;
+        font-family: HelveticaNeue-Bold, 'Helvetica Neue';
+        font-size: 52px;
+      }
+
+      .st2, .st3 {
+        font-weight: 700;
+        isolation: isolate;
+      }
+
+      .st4 {
+        fill: #fff;
+      }
+
+      .st1 {
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 7px;
+      }
+
+      .st5 {
+        fill: #5c5feb;
+      }
+
+      .st3 {
+        fill: #666;
+        font-family: HelveticaNeue-BoldItalic, 'Helvetica Neue';
+        font-size: 21px;
+        font-style: italic;
+      }
+
+      .st6 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="st0" width="120" height="120" rx="28" ry="28"/>
     </clipPath>
   </defs>
-  <rect width="120" height="120" rx="28" fill="white" stroke="#D4D6ED" stroke-width="2"/>
-  <g clip-path="url(#c)">
-    <g transform="rotate(11, 60, 100)">
-      <rect x="10" y="70" width="22" height="30" rx="5"  fill="#5C5FEB"/>
-      <rect x="40" y="46" width="22" height="54" rx="5"  fill="#5C5FEB"/>
-      <rect x="70" y="14" width="22" height="86" rx="5"  fill="#5C5FEB"/>
+  <rect class="st4" width="299" height="120"/>
+  <text class="st2" transform="translate(135.6 63.9)"><tspan x="0" y="0">Stride</tspan></text>
+  <g>
+    <rect class="st5" width="120" height="120" rx="28" ry="28"/>
+    <g class="st6">
+      <g>
+        <g>
+          <rect class="st4" x="9.6" y="66.8" width="30" height="22" rx="5" ry="5" transform="translate(-56.5 87.1) rotate(-79)"/>
+          <rect class="st4" x="29.3" y="60.8" width="54" height="22" rx="5" ry="5" transform="translate(-24.9 113.4) rotate(-79)"/>
+          <rect class="st4" x="45.8" y="50.8" width="86" height="22" rx="5" ry="5" transform="translate(11.2 137.2) rotate(-79)"/>
+        </g>
+        <polyline class="st1" points="8 52 20 66 44 34"/>
+      </g>
     </g>
-    <polyline points="8,52 20,66 44,34" stroke="#5C5FEB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
   </g>
-  <!-- Wordmark -->
-  <text x="140" y="76" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="700" letter-spacing="-1" fill="#111328">Stride</text>
+  <text class="st3" transform="translate(135.6 101.1)"><tspan x="0" y="0">Project Tracker</tspan></text>
 </svg>
