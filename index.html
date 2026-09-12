@@ -1,0 +1,1310 @@
+<title>Stride</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+
+<!-- SheetJS for Excel export/import -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+/* ── Tokens: light (default) ─────────────────────────────── */
+:root {
+  --bg:         #F4F5FC;
+  --surface:    #FFFFFF;
+  --surface-2:  #ECEEF8;
+  --border:     #D4D6ED;
+  --border-sub: #E8EAF4;
+  --tx:         #111328;
+  --tx2:        #545778;
+  --tx3:        #9295AF;
+  --accent:     #5C5FEB;
+  --accent-l:   #EDECFC;
+  --accent-tx:  #3F42B3;
+  --row-h:      #F0F1FB;
+  --head-bg:    #F1F2FA;
+  --hi: #DC2626; --hi-bg: #FEF2F2; --hi-br: #FECACA;
+  --md: #D97706; --md-bg: #FFFBEB; --md-br: #FDE68A;
+  --lo: #059669; --lo-bg: #ECFDF5; --lo-br: #A7F3D0;
+  --sync-cloud:  #059669; --sync-cloud-bg: #ECFDF5;
+  --sync-local:  #D97706; --sync-local-bg: #FFFBEB;
+  --sync-saving: #9295AF; --sync-saving-bg: #F1F2FA;
+  --sync-err:    #DC2626; --sync-err-bg: #FEF2F2;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B0D1A; --surface: #141628; --surface-2: #1C1F38;
+    --border: #282B48; --border-sub: #1C2040;
+    --tx: #E8E9F5; --tx2: #9297B5; --tx3: #575B79;
+    --accent: #6D70F5; --accent-l: #1E2050; --accent-tx: #9EA0FA;
+    --row-h: #191C33; --head-bg: #10122A;
+    --hi: #F87171; --hi-bg: #2D1515; --hi-br: #7F1D1D;
+    --md: #FBBF24; --md-bg: #2D2010; --md-br: #92400E;
+    --lo: #34D399; --lo-bg: #0D2820; --lo-br: #065F46;
+    --sync-cloud:  #34D399; --sync-cloud-bg: #0D2820;
+    --sync-local:  #FBBF24; --sync-local-bg: #2D2010;
+    --sync-saving: #575B79; --sync-saving-bg: #1C1F38;
+    --sync-err:    #F87171; --sync-err-bg: #2D1515;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B0D1A; --surface: #141628; --surface-2: #1C1F38;
+  --border: #282B48; --border-sub: #1C2040;
+  --tx: #E8E9F5; --tx2: #9297B5; --tx3: #575B79;
+  --accent: #6D70F5; --accent-l: #1E2050; --accent-tx: #9EA0FA;
+  --row-h: #191C33; --head-bg: #10122A;
+  --hi: #F87171; --hi-bg: #2D1515; --hi-br: #7F1D1D;
+  --md: #FBBF24; --md-bg: #2D2010; --md-br: #92400E;
+  --lo: #34D399; --lo-bg: #0D2820; --lo-br: #065F46;
+  --sync-cloud:  #34D399; --sync-cloud-bg: #0D2820;
+  --sync-local:  #FBBF24; --sync-local-bg: #2D2010;
+  --sync-saving: #575B79; --sync-saving-bg: #1C1F38;
+  --sync-err:    #F87171; --sync-err-bg: #2D1515;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--tx); line-height: 1.5;
+}
+
+/* ── Topbar ──────────────────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  height: 54px; display: flex; align-items: center;
+  justify-content: space-between; padding-inline: 24px; gap: 12px;
+}
+.topbar-l { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.mark {
+  width: 30px; height: 30px; border-radius: 7px;
+  background: var(--accent); display: grid; place-items: center; flex-shrink: 0;
+}
+.appname { font-size: 14px; font-weight: 700; letter-spacing: -.01em; color: var(--tx); white-space: nowrap; }
+.count-badge {
+  font-size: 11px; font-weight: 600; color: var(--tx3);
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 999px; padding: 2px 9px; white-space: nowrap;
+}
+.sync-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 999px;
+  white-space: nowrap; transition: all .2s;
+}
+.sync-chip .sync-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0;
+}
+.sync-cloud  { color: var(--sync-cloud);  background: var(--sync-cloud-bg); }
+.sync-local  { color: var(--sync-local);  background: var(--sync-local-bg); }
+.sync-saving { color: var(--sync-saving); background: var(--sync-saving-bg); }
+.sync-err    { color: var(--sync-err);    background: var(--sync-err-bg); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.sync-saving .sync-dot {
+  animation: spin .8s linear infinite; border-radius: 0; width: 7px; height: 7px;
+  border: 1.5px solid currentColor; border-top-color: transparent; background: transparent;
+}
+.topbar-r { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn {
+  font-family: inherit; font-size: 12.5px; font-weight: 600;
+  padding: 7px 13px; border-radius: 8px; border: none;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+  transition: filter .12s, background .12s; white-space: nowrap;
+}
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-ghost {
+  font-family: inherit; font-size: 12.5px; font-weight: 600;
+  padding: 7px 13px; border-radius: 8px; border: 1px solid var(--border);
+  background: transparent; color: var(--tx2); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 5px;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.btn-ghost:hover { background: var(--surface-2); color: var(--tx); }
+.icon-btn {
+  background: transparent; border: 1px solid var(--border); border-radius: 8px;
+  width: 34px; height: 34px; display: grid; place-items: center;
+  cursor: pointer; color: var(--tx3); transition: background .12s, color .12s;
+}
+.icon-btn:hover { background: var(--surface-2); color: var(--tx); }
+.icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Export / Import dropdown ────────────────────────────── */
+.menu-wrap { position: relative; }
+.menu-dropdown {
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 200;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 4px; min-width: 180px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  display: none;
+}
+.menu-dropdown.open { display: block; }
+.menu-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 6px; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: var(--tx2);
+  transition: background .1s, color .1s; user-select: none;
+  background: none; border: none; width: 100%; font-family: inherit; text-align: left;
+}
+.menu-item:hover { background: var(--surface-2); color: var(--tx); }
+.menu-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.menu-item-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+.menu-divider { height: 1px; background: var(--border-sub); margin: 4px 0; }
+.menu-label {
+  font-size: 10px; font-weight: 700; color: var(--tx3);
+  text-transform: uppercase; letter-spacing: .08em; padding: 6px 10px 2px;
+}
+
+/* ── Controls bar ────────────────────────────────────────── */
+.ctrl-bar {
+  background: var(--surface); border-bottom: 1px solid var(--border-sub);
+  padding: 9px 24px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.ctrl-lbl { font-size: 10px; font-weight: 700; color: var(--tx3); text-transform: uppercase; letter-spacing: .09em; }
+.pill-row { display: flex; gap: 4px; }
+.pill {
+  font-family: inherit; font-size: 12px; font-weight: 500;
+  padding: 3px 10px; border-radius: 999px; border: 1px solid var(--border);
+  background: transparent; color: var(--tx2); cursor: pointer; transition: all .1s;
+}
+.pill:hover { background: var(--surface-2); color: var(--tx); }
+.pill:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.pill.on     { background: var(--accent-l);  border-color: var(--accent);  color: var(--accent-tx); }
+.pill.on-hi  { background: var(--hi-bg);     border-color: var(--hi-br);   color: var(--hi); }
+.pill.on-md  { background: var(--md-bg);     border-color: var(--md-br);   color: var(--md); }
+.pill.on-lo  { background: var(--lo-bg);     border-color: var(--lo-br);   color: var(--lo); }
+.vsep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+
+/* ── Main ────────────────────────────────────────────────── */
+.main { padding: 24px; max-width: 1440px; margin: 0 auto; }
+
+/* ── Table card ──────────────────────────────────────────── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden; overflow-x: auto;
+}
+table {
+  width: 100%; border-collapse: collapse; min-width: 1060px; table-layout: fixed;
+}
+col.c-proj  { width: 162px; }
+col.c-pri   { width: 90px; }
+col.c-stage { width: 170px; }
+col.c-next  { width: 134px; }
+col.c-block { width: 158px; }
+col.c-notes { width: auto; }
+col.c-upd   { width: 98px; }
+col.c-del   { width: 42px; }
+
+thead { background: var(--head-bg); }
+th {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 700; color: var(--tx3);
+  text-transform: uppercase; letter-spacing: .09em;
+  text-align: left; white-space: nowrap;
+}
+th.sort-th { cursor: pointer; user-select: none; }
+th.sort-th:hover { color: var(--tx2); }
+th.s-asc::after  { content: ' ↑'; color: var(--accent-tx); }
+th.s-desc::after { content: ' ↓'; color: var(--accent-tx); }
+
+/* ── Two-row pair layout ─────────────────────────────────── */
+/* Row 1 of a pair: strong separator from next pair at bottom of span-cells;
+   subtle dashed line between row1 and row2 within a pair */
+tbody tr.tr1 td:not(.span-cell) {
+  padding: 10px 14px 5px;
+  border-bottom: 1px dashed var(--border-sub);
+}
+tbody tr.tr2 td {
+  padding: 4px 14px 10px;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr.tr2:last-child td { border-bottom: none; }
+
+/* Span cells (rowspan=2) live in tr1 and span both rows */
+td.span-cell {
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+/* Group hover — JS adds .row-hover to both tr1 and tr2 of a project */
+tbody tr.row-hover td { background: var(--row-h); }
+
+/* ── Contenteditable text cells ──────────────────────────── */
+td { font-size: 13px; color: var(--tx); }
+
+.cell-text {
+  display: block; outline: none; border-radius: 4px;
+  word-break: break-word; min-height: 20px; line-height: 1.55;
+  padding: 1px 3px;
+  transition: background .1s, box-shadow .1s;
+}
+.cell-text[contenteditable="true"]:hover:not(:focus) { background: var(--accent-l); }
+.cell-text[contenteditable="true"]:focus {
+  background: var(--accent-l);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+.cell-text:empty::before {
+  content: attr(data-ph); color: var(--tx3); pointer-events: none;
+}
+
+/* Row 1 cells: project name etc. — slightly bolder */
+tr.tr1 .cell-text { font-weight: 600; font-size: 13px; color: var(--tx); }
+/* Row 2 cells: descriptions — muted, smaller */
+tr.tr2 .cell-text { font-weight: 400; font-size: 12px; color: var(--tx2); }
+
+/* Date cell */
+.date-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px; color: var(--tx3);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+.date-text:focus { color: var(--tx); }
+
+/* Notes span cell */
+td.notes-td { padding: 8px 14px; vertical-align: top; }
+td.notes-td .cell-text {
+  font-size: 12px; color: var(--tx2); white-space: pre-wrap; min-height: 44px;
+}
+
+/* ── Select dropdowns ────────────────────────────────────── */
+td.sel-td { padding: 9px 14px 4px; vertical-align: middle; }
+td.sel-desc-td { padding: 3px 14px 9px; }
+
+.cell-select {
+  width: 100%; background: transparent; border: none; outline: none;
+  font-family: inherit; font-size: 12.5px; color: var(--tx2);
+  cursor: pointer; padding: 1px 0; appearance: auto; -webkit-appearance: auto;
+}
+.cell-select:focus { color: var(--accent-tx); }
+.cell-select option { background: var(--surface); color: var(--tx); }
+
+/* Stage select: color it by current stage category */
+.cell-select.sel-stage { font-weight: 600; color: var(--tx); }
+
+/* ── Priority (span-cell) ────────────────────────────────── */
+td.pri-td { padding: 6px 10px; text-align: center; }
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 999px; border: 1px solid transparent;
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+  cursor: pointer; user-select: none; white-space: nowrap; transition: filter .1s;
+}
+.badge:hover { filter: brightness(.9); }
+.badge:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.b-hi { background: var(--hi-bg); color: var(--hi); border-color: var(--hi-br); }
+.b-md { background: var(--md-bg); color: var(--md); border-color: var(--md-br); }
+.b-lo { background: var(--lo-bg); color: var(--lo); border-color: var(--lo-br); }
+
+/* ── Last Updated (span-cell) ────────────────────────────── */
+td.upd-td {
+  padding: 6px 10px; text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px; color: var(--tx3);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* ── Delete (span-cell) ──────────────────────────────────── */
+td.del-td { padding: 0 6px; text-align: center; position: relative; overflow: visible; }
+.del-btn {
+  background: none; border: none; cursor: pointer; color: var(--tx3);
+  border-radius: 6px; padding: 5px; opacity: 0;
+  transition: opacity .1s, background .1s, color .1s;
+  display: grid; place-items: center;
+}
+tr.row-hover .del-btn { opacity: 1; }
+.del-btn:hover { background: var(--hi-bg); color: var(--hi); }
+.del-confirm {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  display: flex; align-items: center; gap: 4px; white-space: nowrap;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 4px 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.12); z-index: 20;
+}
+.del-confirm-yes, .del-confirm-no {
+  font-family: inherit; font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 6px; border: 1px solid transparent;
+  cursor: pointer; transition: background .1s, color .1s;
+}
+.del-confirm-yes { background: var(--hi-bg); color: var(--hi); border-color: var(--hi-br); }
+.del-confirm-yes:hover { background: var(--hi); color: #fff; }
+.del-confirm-no  { background: var(--surface-2); color: var(--tx2); border-color: var(--border); }
+.del-confirm-no:hover { background: var(--border); }
+
+/* ── Add-row trigger ─────────────────────────────────────── */
+.add-row {
+  width: 100%; border: none; border-top: 1px solid var(--border-sub);
+  background: transparent; padding: 11px 14px;
+  font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--tx3);
+  cursor: pointer; text-align: left; display: flex; align-items: center; gap: 7px;
+  transition: background .1s, color .1s;
+}
+.add-row:hover { background: var(--row-h); color: var(--accent-tx); }
+.add-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* ── Empty state ─────────────────────────────────────────── */
+.empty { padding: 60px 20px; text-align: center; }
+.empty h3 { font-size: 14px; font-weight: 600; color: var(--tx2); margin-bottom: 4px; }
+.empty p  { font-size: 12.5px; color: var(--tx3); }
+
+/* ── Footer ──────────────────────────────────────────────── */
+.footer { display: flex; gap: 16px; padding-block: 14px 0; flex-wrap: wrap; align-items: center; }
+.sum-i  { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--tx3); }
+.sum-dot { width: 7px; height: 7px; border-radius: 50%; }
+.footer-hint { margin-left: auto; font-size: 11px; color: var(--tx3); opacity: .7; }
+
+/* ── Toast ───────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--tx); color: var(--bg);
+  font-size: 12.5px; font-weight: 500; padding: 9px 16px; border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.2); z-index: 9999; white-space: nowrap;
+  opacity: 0; transition: opacity .2s; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+.toast.toast-err { background: var(--hi); color: white; }
+
+/* ── Export banner ───────────────────────────────────────── */
+.export-banner {
+  margin-top: 12px;
+  background: var(--md-bg); border: 1px solid var(--md-br);
+  border-radius: 10px; padding: 11px 16px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.export-banner[hidden] { display: none !important; }
+.export-banner-text {
+  flex: 1; font-size: 12.5px; color: var(--md); font-weight: 500; min-width: 0;
+}
+.export-banner-text strong { font-weight: 700; }
+.export-banner-btns { display: flex; gap: 6px; flex-shrink: 0; }
+.banner-btn {
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 5px 12px; border-radius: 7px; border: 1px solid var(--md-br);
+  background: var(--md-bg); color: var(--md); cursor: pointer;
+  transition: background .1s, color .1s;
+}
+.banner-btn:hover { background: var(--md); color: #fff; border-color: var(--md); }
+.banner-dismiss {
+  background: none; border: none; cursor: pointer; color: var(--md);
+  font-size: 16px; line-height: 1; padding: 2px 4px; opacity: .7; flex-shrink: 0;
+}
+.banner-dismiss:hover { opacity: 1; }
+
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .topbar, .ctrl-bar, .main { padding-inline: 16px; }
+  .appname { font-size: 13px; }
+  .ctrl-bar { flex-wrap: nowrap; overflow-x: auto; }
+  .count-badge, .sync-chip { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, .sync-saving .sync-dot { animation: none !important; transition: none !important; }
+}
+
+/* ── About modal ─────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.45); backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: auto; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; width: 100%; max-width: 400px;
+  padding: 28px 28px 24px; position: relative;
+  box-shadow: 0 24px 64px rgba(0,0,0,.18);
+  transform: translateY(10px); transition: transform .2s;
+}
+.modal-backdrop.open .modal { transform: translateY(0); }
+.modal-close {
+  position: absolute; top: 14px; right: 14px;
+  background: none; border: none; cursor: pointer;
+  color: var(--tx3); border-radius: 7px; padding: 5px;
+  display: grid; place-items: center; transition: background .1s, color .1s;
+}
+.modal-close:hover { background: var(--surface-2); color: var(--tx); }
+.modal-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.modal-logo {
+  width: 44px; height: 44px; border-radius: 11px;
+  background: var(--accent); display: grid; place-items: center; margin-bottom: 14px;
+}
+.modal h2 { font-size: 18px; font-weight: 700; color: var(--tx); margin-bottom: 6px; letter-spacing: -.02em; }
+.modal-desc { font-size: 13px; color: var(--tx2); line-height: 1.65; margin-bottom: 20px; }
+.modal-meta { border-top: 1px solid var(--border-sub); padding-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+.modal-row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--tx3); }
+.modal-row strong { color: var(--tx2); font-weight: 600; }
+.modal-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--accent-l); color: var(--accent-tx);
+  border: 1px solid var(--accent); border-radius: 999px;
+  font-size: 11px; font-weight: 600; padding: 2px 9px;
+}
+
+/* ── Filename dialog ─────────────────────────────────────── */
+.fname-label {
+  display: block; font-size: 11px; font-weight: 700; color: var(--tx3);
+  text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px;
+}
+.fname-row {
+  display: flex; align-items: center;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  overflow: hidden; background: var(--bg); transition: border-color .15s;
+}
+.fname-row:focus-within { border-color: var(--accent); }
+.fname-input {
+  flex: 1; border: none; background: transparent; padding: 8px 10px;
+  font-family: inherit; font-size: 13px; color: var(--tx); outline: none; min-width: 0;
+}
+.fname-ext { padding: 8px 10px 8px 4px; font-size: 13px; color: var(--tx3); white-space: nowrap; user-select: none; }
+.fname-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
+</style>
+
+<!-- Hidden file inputs -->
+<input type="file" id="import-input"       accept=".json"      style="display:none" aria-hidden="true">
+<input type="file" id="import-excel-input" accept=".xlsx,.xls" style="display:none" aria-hidden="true">
+
+<!-- ── Topbar ──────────────────────────────────────────────── -->
+<header class="topbar">
+  <div class="topbar-l">
+    <div class="mark" aria-hidden="true">
+      <svg width="22" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><clipPath id="mc"><rect width="48" height="48" rx="12"/></clipPath></defs>
+        <g clip-path="url(#mc)">
+          <g transform="rotate(11, 22, 40)">
+            <rect x="5"  y="34" width="5.5" height="6"  rx="1.5" fill="white"/>
+            <rect x="13" y="27" width="5.5" height="13" rx="1.5" fill="white"/>
+            <rect x="21" y="17" width="5.5" height="23" rx="1.5" fill="white"/>
+            <rect x="29" y="4"  width="5.5" height="36" rx="1.5" fill="white"/>
+          </g>
+          <polyline points="5,20 9,25 19,12" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </g>
+      </svg>
+    </div>
+    <span class="appname">Stride</span>
+    <span class="count-badge" id="cnt">0 projects</span>
+    <span class="sync-chip sync-cloud" id="sync-chip" aria-live="polite">
+      <span class="sync-dot" aria-hidden="true"></span>
+      <span id="sync-label">✓ Auto-saved</span>
+    </span>
+  </div>
+  <div class="topbar-r">
+    <div class="menu-wrap" id="export-wrap">
+      <button class="btn-ghost" id="exp-btn" aria-haspopup="true" aria-expanded="false" aria-controls="exp-dropdown">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 1v8M3 6l3 3 3-3"/><line x1="1" y1="11" x2="11" y2="11"/>
+        </svg>
+        Export
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
+      </button>
+      <div class="menu-dropdown" id="exp-dropdown" role="menu">
+        <button class="menu-item" id="exp-excel" role="menuitem"><span class="menu-item-icon">📊</span> Excel (.xlsx)</button>
+        <button class="menu-item" id="exp-json"  role="menuitem"><span class="menu-item-icon">📄</span> JSON</button>
+      </div>
+    </div>
+    <div class="menu-wrap" id="import-wrap">
+      <button class="btn-ghost" id="imp-btn" aria-haspopup="true" aria-expanded="false" aria-controls="imp-dropdown">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 9V1M3 4l3-3 3 3"/><line x1="1" y1="11" x2="11" y2="11"/>
+        </svg>
+        Import
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
+      </button>
+      <div class="menu-dropdown" id="imp-dropdown" role="menu">
+        <button class="menu-item" id="imp-excel" role="menuitem"><span class="menu-item-icon">📊</span> Excel (.xlsx)</button>
+        <button class="menu-item" id="imp-json"  role="menuitem"><span class="menu-item-icon">📄</span> JSON</button>
+      </div>
+    </div>
+    <button class="icon-btn" id="about-btn" title="About Stride" aria-label="About Stride">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+      </svg>
+    </button>
+    <button class="icon-btn" id="theme-btn" title="Toggle dark / light" aria-label="Toggle theme">
+      <svg id="sun-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg id="moon-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+    <button class="btn btn-primary" id="add-btn" aria-label="Add a new project">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <line x1="5.5" y1="1" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="10" y2="5.5"/>
+      </svg>
+      Add project
+    </button>
+  </div>
+</header>
+
+<!-- ── Controls bar ──────────────────────────────────────── -->
+<div class="ctrl-bar" role="toolbar" aria-label="Filter and sort controls">
+  <span class="ctrl-lbl">Priority</span>
+  <div class="pill-row" id="f-pills" role="group" aria-label="Filter by priority">
+    <button class="pill on" data-f="all"    aria-pressed="true">All</button>
+    <button class="pill"    data-f="High"   aria-pressed="false">High</button>
+    <button class="pill"    data-f="Medium" aria-pressed="false">Medium</button>
+    <button class="pill"    data-f="Low"    aria-pressed="false">Low</button>
+  </div>
+  <div class="vsep" aria-hidden="true"></div>
+  <span class="ctrl-lbl">Sort by</span>
+  <div class="pill-row" id="s-pills" role="group" aria-label="Sort by field">
+    <button class="pill" data-s="priority"  aria-pressed="false">Priority</button>
+    <button class="pill" data-s="nextDate"  aria-pressed="false">Deadline</button>
+    <button class="pill" data-s="updatedAt" aria-pressed="false">Updated</button>
+    <button class="pill" data-s="name"      aria-pressed="false">Name</button>
+  </div>
+</div>
+
+<!-- ── Main ──────────────────────────────────────────────── -->
+<main class="main">
+  <div class="card">
+    <table aria-label="Project progress tracker">
+      <colgroup>
+        <col class="c-proj"> <col class="c-pri">   <col class="c-stage">
+        <col class="c-next"> <col class="c-block"> <col class="c-notes">
+        <col class="c-upd">  <col class="c-del">
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="sort-th" data-s="name">Project</th>
+          <th>Priority</th>
+          <th>Stage</th>
+          <th class="sort-th" data-s="nextDate">Next Step</th>
+          <th>Blockers</th>
+          <th>Notes</th>
+          <th class="sort-th" data-s="updatedAt">Last Updated</th>
+          <th aria-label="Actions"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty-state" role="status">
+      <h3>No projects yet</h3>
+      <p>Click "Add project" to start tracking your work.</p>
+    </div>
+    <button class="add-row" id="add-row-btn" aria-label="Add a new project row">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <line x1="5.5" y1="1" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="10" y2="5.5"/>
+      </svg>
+      Add project
+    </button>
+  </div>
+  <div class="footer" role="status" aria-live="polite">
+    <div class="sum-i"><div class="sum-dot" style="background:var(--hi)"></div><span id="s-hi">0 High</span></div>
+    <div class="sum-i"><div class="sum-dot" style="background:var(--md)"></div><span id="s-md">0 Medium</span></div>
+    <div class="sum-i"><div class="sum-dot" style="background:var(--lo)"></div><span id="s-lo">0 Low</span></div>
+    <span class="footer-hint">Two rows per project: row 1 for key info · row 2 for details · Click priority badge to cycle</span>
+  </div>
+
+  <!-- Export reminder banner — shown when there are changes since last export -->
+  <div class="export-banner" id="export-banner" hidden role="alert">
+    <span class="export-banner-text">
+      <strong>Unsaved changes.</strong> Export to keep a backup — browser storage can be cleared.
+    </span>
+    <div class="export-banner-btns">
+      <button class="banner-btn" id="banner-exp-excel">📊 Excel</button>
+      <button class="banner-btn" id="banner-exp-json">📄 JSON</button>
+    </div>
+    <button class="banner-dismiss" id="banner-dismiss" title="Dismiss">×</button>
+  </div>
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+
+<!-- About modal -->
+<div class="modal-backdrop" id="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
+  <div class="modal">
+    <button class="modal-close" id="about-close" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <div class="modal-logo" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><clipPath id="ml"><rect width="48" height="48" rx="12"/></clipPath></defs>
+        <g clip-path="url(#ml)">
+          <g transform="rotate(11, 22, 40)">
+            <rect x="5"  y="34" width="5.5" height="6"  rx="1.5" fill="white"/>
+            <rect x="13" y="27" width="5.5" height="13" rx="1.5" fill="white"/>
+            <rect x="21" y="17" width="5.5" height="23" rx="1.5" fill="white"/>
+            <rect x="29" y="4"  width="5.5" height="36" rx="1.5" fill="white"/>
+          </g>
+          <polyline points="5,20 9,25 19,12" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </g>
+      </svg>
+    </div>
+    <h2 id="about-title">Stride</h2>
+    <p class="modal-desc">
+      A lightweight project progress tracker for research groups and graduate students.
+      Each project gets two rows: key data on top, details below. Data saves automatically
+      to your browser. Export to Excel or JSON for an external backup — Stride will remind you
+      if you try to close the tab with unexported changes.
+    </p>
+    <div class="modal-meta">
+      <div class="modal-row">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Author&ensp;<strong>Xiaotao Yang</strong></span>
+      </div>
+      <div class="modal-row">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <span>Built with&ensp;<span class="modal-chip">Claude by Anthropic</span></span>
+      </div>
+      <div class="modal-row">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        <span>Purdue University · CSaT</span>
+      </div>
+      <div class="modal-row" style="margin-top:4px;padding-top:12px;border-top:1px solid var(--border-sub);flex-direction:column;align-items:flex-start;gap:6px">
+        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3)">Storage</span>
+        <span style="font-size:12px;color:var(--tx2);line-height:1.6">
+          Data saves automatically to <strong style="color:var(--tx)">this browser</strong>.
+          Use <em>Export</em> to download an Excel or JSON backup.
+          Stride will prompt you if you close the tab with changes you haven't exported yet.
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filename dialog -->
+<div class="modal-backdrop" id="fname-modal" role="dialog" aria-modal="true" aria-labelledby="fname-title">
+  <div class="modal" style="max-width:360px">
+    <button class="modal-close" id="fname-close" aria-label="Cancel export">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <h2 id="fname-title" style="font-size:15px;margin-bottom:14px">Save as</h2>
+    <label class="fname-label" for="fname-input">File name</label>
+    <div class="fname-row">
+      <input class="fname-input" id="fname-input" type="text" spellcheck="false" autocomplete="off">
+      <span class="fname-ext" id="fname-ext-label"></span>
+    </div>
+    <div class="fname-actions">
+      <button class="btn-ghost" id="fname-cancel">Cancel</button>
+      <button class="btn btn-primary" id="fname-ok">Download</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   CONSTANTS
+══════════════════════════════════════════════════════════ */
+const STAGE_OPTS   = ['Planning', 'In Progress', 'Analyzing', 'Writing', 'Under Review', 'On Hold', 'Done'];
+const BLOCKER_OPTS = ['None', 'Awaiting Feedback', 'Missing Data', 'Resources', 'Technical', 'External', 'Other'];
+const PRI_CYCLE    = ['High', 'Medium', 'Low'];
+const PRI_ORDER    = { High: 0, Medium: 1, Low: 2 };
+
+/* ══════════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════════ */
+const LS_KEY = 'pt-v2'; // v2 — new schema
+let S = { projects: [], filter: 'all', sort: null, dir: 'asc', theme: 'system' };
+
+let dlApi = null;
+let lastExportedAt = 0; // timestamp of last export; 0 = never
+try { lastExportedAt = +(localStorage.getItem('pt-last-export') || 0); } catch(e) {}
+
+/* ══════════════════════════════════════════════════════════
+   LOCAL STORAGE
+══════════════════════════════════════════════════════════ */
+function loadLocal() {
+  try {
+    const d = localStorage.getItem(LS_KEY);
+    if (d) Object.assign(S, JSON.parse(d));
+    // Also try to migrate from v1 if no v2 data yet
+    if (!S.projects.length) {
+      const v1 = localStorage.getItem('pt-v1');
+      if (v1) {
+        const old = JSON.parse(v1);
+        if (old.projects) S.projects = old.projects.map(migrateProject);
+      }
+    }
+  } catch(e) {}
+}
+function saveLocal() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch(e) {}
+}
+
+/* ══════════════════════════════════════════════════════════
+   SAVE STATUS + EXPORT BANNER
+══════════════════════════════════════════════════════════ */
+let bannerDismissed = false;
+
+function updateSaveChip() {
+  const chip  = document.getElementById('sync-chip');
+  const label = document.getElementById('sync-label');
+  const banner = document.getElementById('export-banner');
+  const latestChange = S.projects.length ? Math.max(...S.projects.map(p => p.updatedAt || 0)) : 0;
+  const hasUnsaved = S.projects.length > 0 && latestChange > lastExportedAt;
+
+  if (hasUnsaved) {
+    chip.className = 'sync-chip sync-local';
+    label.textContent = '📤 Export to back up';
+    if (!bannerDismissed) banner.hidden = false;
+  } else {
+    chip.className = 'sync-chip sync-cloud';
+    label.textContent = '✓ Auto-saved';
+    banner.hidden = true;
+    bannerDismissed = false; // reset so banner reappears on next change
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   DATA HELPERS
+══════════════════════════════════════════════════════════ */
+function mkId()  { return Date.now() + '-' + Math.random().toString(36).slice(2, 7); }
+function today() { return new Date().toISOString().slice(0, 10); }
+
+function mkProject() {
+  return {
+    id: mkId(), name: '', desc: '',
+    priority: 'Medium',
+    stage: 'Planning', stageDesc: '',
+    nextDate: today(), nextDesc: '',
+    blockersCategory: 'None', blockersDetail: '',
+    notes: '',
+    updatedAt: Date.now()
+  };
+}
+
+// Migrate from old schema (v1: goal, date, next, stage as free text)
+function migrateProject(p) {
+  const oldStage = p.stage || '';
+  return {
+    id:               p.id               || mkId(),
+    name:             p.name             || '',
+    desc:             p.desc             || p.goal          || '',
+    priority:         PRI_CYCLE.includes(p.priority) ? p.priority : 'Medium',
+    stage:            STAGE_OPTS.includes(oldStage) ? oldStage : 'Planning',
+    stageDesc:        p.stageDesc        || (STAGE_OPTS.includes(oldStage) ? '' : oldStage),
+    nextDate:         p.nextDate         || p.date          || today(),
+    nextDesc:         p.nextDesc         || p.next          || '',
+    blockersCategory: BLOCKER_OPTS.includes(p.blockersCategory) ? p.blockersCategory : 'None',
+    blockersDetail:   p.blockersDetail   || '',
+    notes:            p.notes            || '',
+    updatedAt:        p.updatedAt        || Date.now(),
+  };
+}
+
+function nextPri(p) { return PRI_CYCLE[(PRI_CYCLE.indexOf(p) + 1) % 3]; }
+function badgeCls(p) { return p === 'High' ? 'b-hi' : p === 'Medium' ? 'b-md' : 'b-lo'; }
+
+function fmtUpdated(ts) {
+  if (!ts) return '—';
+  const diff = Date.now() - +ts;
+  const d = new Date(+ts);
+  if (diff < 60000)         return 'just now';
+  if (diff < 3600000)       return Math.floor(diff / 60000) + 'm ago';
+  if (diff < 86400000)      return Math.floor(diff / 3600000) + 'h ago';
+  if (diff < 7 * 86400000)  return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+  return d.toISOString().slice(0, 10);
+}
+
+function getRows() {
+  let rows = [...S.projects];
+  if (S.filter !== 'all') rows = rows.filter(r => r.priority === S.filter);
+  if (S.sort) {
+    rows.sort((a, b) => {
+      let v = 0;
+      if (S.sort === 'priority')  v = PRI_ORDER[a.priority] - PRI_ORDER[b.priority];
+      else if (S.sort === 'nextDate')  v = (a.nextDate||'').localeCompare(b.nextDate||'');
+      else if (S.sort === 'updatedAt') v = (a.updatedAt||0) - (b.updatedAt||0);
+      else if (S.sort === 'name')      v = (a.name||'').toLowerCase().localeCompare((b.name||'').toLowerCase());
+      return S.dir === 'asc' ? v : -v;
+    });
+  }
+  return rows;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SAVE
+══════════════════════════════════════════════════════════ */
+function saveData() {
+  saveLocal();
+  updateSaveChip();
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════════════════════ */
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function editCell(fld, ph, val, pid, extraCls) {
+  const cls = 'cell-text' + (extraCls ? ' ' + extraCls : '');
+  return `<div class="${cls}" contenteditable="true" data-fld="${fld}" data-pid="${pid}" data-ph="${ph}">${esc(val)}</div>`;
+}
+
+function stageOpts(cur) {
+  return STAGE_OPTS.map(o => `<option value="${esc(o)}"${o===cur?' selected':''}>${esc(o)}</option>`).join('');
+}
+function blockerOpts(cur) {
+  return BLOCKER_OPTS.map(o => `<option value="${esc(o)}"${o===cur?' selected':''}>${esc(o)}</option>`).join('');
+}
+
+const DEL_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+  <polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14a2,2,0,0,1-2,2H8a2,2,0,0,1-2,-2L5,6"/>
+  <path d="M10,11v6M14,11v6"/><path d="M9,6V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1V6"/>
+</svg>`;
+
+function rowHTML(p) {
+  const id = p.id;
+  return `
+<tr class="tr1" data-id="${id}">
+  <td>${editCell('name', 'Project name', p.name, id)}</td>
+  <td class="span-cell pri-td" rowspan="2">
+    <span class="badge ${badgeCls(p.priority)}" data-id="${id}" role="button" tabindex="0"
+      aria-label="Priority: ${p.priority}. Click to cycle.">
+      <span class="dot" aria-hidden="true"></span>${p.priority}
+    </span>
+  </td>
+  <td class="sel-td">
+    <select class="cell-select sel-stage" data-fld="stage" data-pid="${id}" aria-label="Stage">
+      ${stageOpts(p.stage)}
+    </select>
+  </td>
+  <td>${editCell('nextDate', 'YYYY-MM-DD', p.nextDate, id, 'date-text')}</td>
+  <td class="sel-td">
+    <select class="cell-select" data-fld="blockersCategory" data-pid="${id}" aria-label="Blockers category">
+      ${blockerOpts(p.blockersCategory)}
+    </select>
+  </td>
+  <td class="span-cell notes-td" rowspan="2">
+    ${editCell('notes', 'Notes…', p.notes, id)}
+  </td>
+  <td class="span-cell upd-td" rowspan="2" id="upd-${id}">${fmtUpdated(p.updatedAt)}</td>
+  <td class="span-cell del-td" rowspan="2">
+    <button class="del-btn" data-id="${id}" aria-label="Delete project">${DEL_ICON}</button>
+  </td>
+</tr>
+<tr class="tr2" data-id="${id}">
+  <td>${editCell('desc', 'Short description…', p.desc, id)}</td>
+  <td class="sel-desc-td">${editCell('stageDesc', 'Stage details…', p.stageDesc, id)}</td>
+  <td>${editCell('nextDesc', 'What needs to happen…', p.nextDesc, id)}</td>
+  <td>${editCell('blockersDetail', 'Describe the blocker…', p.blockersDetail, id)}</td>
+</tr>`;
+}
+
+function render() {
+  const rows  = getRows();
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = rows.map(rowHTML).join('');
+  document.getElementById('empty-state').style.display = rows.length ? 'none' : 'block';
+  updateCounts();
+
+  document.querySelectorAll('th[data-s]').forEach(th => {
+    th.classList.remove('s-asc', 's-desc');
+    if (th.dataset.s === S.sort) th.classList.add(S.dir === 'asc' ? 's-asc' : 's-desc');
+  });
+  document.querySelectorAll('#f-pills .pill').forEach(p => {
+    const on = p.dataset.f === S.filter;
+    p.setAttribute('aria-pressed', on);
+    p.className = 'pill' + (on ? (
+      S.filter==='High' ? ' on-hi' : S.filter==='Medium' ? ' on-md' : S.filter==='Low' ? ' on-lo' : ' on'
+    ) : '');
+  });
+  document.querySelectorAll('#s-pills .pill').forEach(p => {
+    const on = p.dataset.s === S.sort;
+    p.setAttribute('aria-pressed', on);
+    p.classList.toggle('on', on);
+  });
+}
+
+function updateCounts() {
+  const all = S.projects;
+  document.getElementById('cnt').textContent = `${all.length} project${all.length !== 1 ? 's' : ''}`;
+  document.getElementById('s-hi').textContent = `${all.filter(p => p.priority === 'High').length} High`;
+  document.getElementById('s-md').textContent = `${all.filter(p => p.priority === 'Medium').length} Medium`;
+  document.getElementById('s-lo').textContent = `${all.filter(p => p.priority === 'Low').length} Low`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   EVENTS
+══════════════════════════════════════════════════════════ */
+
+// Track editing focus
+document.addEventListener('focus', e => {
+  if (e.target.closest('.cell-text[contenteditable]')) isEditing = true;
+}, true);
+
+// Blur: save contenteditable field
+document.addEventListener('blur', e => {
+  const ct = e.target.closest('.cell-text[contenteditable][data-fld]');
+  if (!ct) return;
+  const tr = ct.closest('[data-id]');
+  if (!tr) return;
+  const proj = S.projects.find(x => x.id === tr.dataset.id);
+  if (proj) {
+    proj[ct.dataset.fld] = ct.innerText.trim();
+    proj.updatedAt = Date.now();
+    const updEl = document.getElementById('upd-' + proj.id);
+    if (updEl) updEl.textContent = fmtUpdated(proj.updatedAt);
+    saveData();
+    updateCounts();
+  }
+  isEditing = false;
+  if (pendingServerProjects) {
+    S.projects = pendingServerProjects;
+    pendingServerProjects = null;
+    render();
+  }
+}, true);
+
+// Enter in contenteditable: blur to finish
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey && e.target.closest('.cell-text[contenteditable]')) {
+    e.preventDefault(); e.target.blur();
+  }
+  if ((e.key === ' ' || e.key === 'Enter') && e.target.classList.contains('badge')) {
+    e.preventDefault();
+    const proj = S.projects.find(x => x.id === e.target.dataset.id);
+    if (proj) { proj.priority = nextPri(proj.priority); proj.updatedAt = Date.now(); saveData(); render(); }
+  }
+});
+
+// Select change: save immediately
+document.getElementById('tbody').addEventListener('change', e => {
+  const sel = e.target.closest('select.cell-select[data-fld]');
+  if (!sel) return;
+  const tr = sel.closest('[data-id]');
+  if (!tr) return;
+  const proj = S.projects.find(x => x.id === tr.dataset.id);
+  if (proj) {
+    proj[sel.dataset.fld] = sel.value;
+    proj.updatedAt = Date.now();
+    const updEl = document.getElementById('upd-' + proj.id);
+    if (updEl) updEl.textContent = fmtUpdated(proj.updatedAt);
+    saveData();
+  }
+});
+
+// Group hover: both tr1 and tr2 highlight together
+const tbody = document.getElementById('tbody');
+let lastHoverId = null;
+function setRowHover(id) {
+  if (lastHoverId === id) return;
+  if (lastHoverId) {
+    document.querySelectorAll(`#tbody tr[data-id="${lastHoverId}"]`).forEach(r => r.classList.remove('row-hover'));
+  }
+  lastHoverId = id || null;
+  if (id) {
+    document.querySelectorAll(`#tbody tr[data-id="${id}"]`).forEach(r => r.classList.add('row-hover'));
+  }
+}
+tbody.addEventListener('mouseover', e => {
+  const tr = e.target.closest('tr[data-id]');
+  setRowHover(tr ? tr.dataset.id : null);
+});
+tbody.addEventListener('mouseleave', () => setRowHover(null));
+
+// Click dispatch
+document.addEventListener('click', e => {
+  // Priority badge
+  const badge = e.target.closest('.badge[data-id]');
+  if (badge) {
+    const proj = S.projects.find(x => x.id === badge.dataset.id);
+    if (proj) { proj.priority = nextPri(proj.priority); proj.updatedAt = Date.now(); saveData(); render(); }
+    return;
+  }
+  // Delete: show confirm
+  const del = e.target.closest('.del-btn[data-id]');
+  if (del) {
+    const td = del.closest('td.del-td');
+    td.innerHTML = `<div class="del-confirm">
+      <button class="del-confirm-yes" data-id="${del.dataset.id}" aria-label="Confirm delete">Delete</button>
+      <button class="del-confirm-no"  data-id="${del.dataset.id}" aria-label="Cancel">Cancel</button>
+    </div>`;
+    return;
+  }
+  // Delete confirm — Yes
+  const yes = e.target.closest('.del-confirm-yes');
+  if (yes) { S.projects = S.projects.filter(x => x.id !== yes.dataset.id); saveData(); render(); return; }
+  // Delete confirm — No
+  const no = e.target.closest('.del-confirm-no');
+  if (no) { render(); return; }
+  // Filter pills
+  const fp = e.target.closest('#f-pills .pill');
+  if (fp) { S.filter = fp.dataset.f; saveLocal(); render(); return; }
+  // Sort pills
+  const sp = e.target.closest('#s-pills .pill');
+  if (sp) {
+    const key = sp.dataset.s;
+    if (S.sort === key) S.dir = S.dir === 'asc' ? 'desc' : 'asc'; else { S.sort = key; S.dir = 'asc'; }
+    saveLocal(); render(); return;
+  }
+  // Sort headers
+  const th = e.target.closest('th[data-s]');
+  if (th) {
+    const key = th.dataset.s;
+    if (S.sort === key) S.dir = S.dir === 'asc' ? 'desc' : 'asc'; else { S.sort = key; S.dir = 'asc'; }
+    saveLocal(); render(); return;
+  }
+  // Add
+  if (e.target.closest('#add-btn') || e.target.closest('#add-row-btn')) { addProject(); return; }
+  // Export / Import menus
+  if (e.target.closest('#exp-btn')) { toggleExpMenu(); return; }
+  if (e.target.closest('#imp-btn')) { toggleImpMenu(); return; }
+  if (!e.target.closest('#export-wrap')) closeExpMenu();
+  if (!e.target.closest('#import-wrap')) closeImpMenu();
+});
+
+/* ── Export / Import menus ────────────────────────────────── */
+function toggleExpMenu() {
+  const dd = document.getElementById('exp-dropdown');
+  const btn = document.getElementById('exp-btn');
+  closeImpMenu();
+  const open = dd.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+function closeExpMenu() {
+  document.getElementById('exp-dropdown').classList.remove('open');
+  document.getElementById('exp-btn').setAttribute('aria-expanded', false);
+}
+function toggleImpMenu() {
+  const dd = document.getElementById('imp-dropdown');
+  const btn = document.getElementById('imp-btn');
+  closeExpMenu();
+  const open = dd.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+function closeImpMenu() {
+  document.getElementById('imp-dropdown').classList.remove('open');
+  document.getElementById('imp-btn').setAttribute('aria-expanded', false);
+}
+document.getElementById('exp-excel').addEventListener('click', () => { closeExpMenu(); exportExcel(); });
+document.getElementById('exp-json').addEventListener('click',  () => { closeExpMenu(); exportJSON(); });
+document.getElementById('imp-excel').addEventListener('click', () => { closeImpMenu(); document.getElementById('import-excel-input').click(); });
+document.getElementById('imp-json').addEventListener('click',  () => { closeImpMenu(); document.getElementById('import-input').click(); });
+
+// Banner buttons
+document.getElementById('banner-exp-excel').addEventListener('click', () => exportExcel());
+document.getElementById('banner-exp-json').addEventListener('click',  () => exportJSON());
+document.getElementById('banner-dismiss').addEventListener('click', () => {
+  bannerDismissed = true;
+  document.getElementById('export-banner').hidden = true;
+});
+
+/* ── Export Excel ─────────────────────────────────────────── */
+async function exportExcel() {
+  if (!S.projects.length) { showToast('No projects to export', 'err'); return; }
+  const baseName = await promptFilename('Stride_projects', '.xlsx');
+  if (!baseName) return;
+  try {
+    const rows = S.projects.map(p => ({
+      'Project':            p.name,
+      'Description':        p.desc,
+      'Priority':           p.priority,
+      'Stage':              p.stage,
+      'Stage Description':  p.stageDesc,
+      'Deadline':           p.nextDate,
+      'Next Step':          p.nextDesc,
+      'Blockers':           p.blockersCategory,
+      'Blockers Detail':    p.blockersDetail,
+      'Notes':              p.notes,
+      'Last Updated':       p.updatedAt ? new Date(p.updatedAt).toISOString() : '',
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [22,32,10,18,28,12,30,18,28,32,20].map(w => ({ wch: w }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Projects');
+    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const data = new Uint8Array(buf);
+    const filename = baseName.replace(/\.xlsx$/i, '') + '.xlsx';
+    if (dlApi) {
+      await dlApi.save({ filename, data });
+    } else {
+      const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+      Object.assign(document.createElement('a'), { href: url, download: filename }).click();
+      URL.revokeObjectURL(url);
+    }
+    markExported();
+  } catch(e) {
+    if (e?.code !== 'declined') showToast('Export failed: ' + (e?.message || e), 'err');
+  }
+}
+
+/* ── Export JSON ──────────────────────────────────────────── */
+async function exportJSON() {
+  if (!S.projects.length) { showToast('No projects to export', 'err'); return; }
+  const baseName = await promptFilename('Stride_projects', '.json');
+  if (!baseName) return;
+  const filename = baseName.replace(/\.json$/i, '') + '.json';
+  const payload = JSON.stringify({ exported: new Date().toISOString(), version: 2, projects: S.projects }, null, 2);
+  try {
+    if (dlApi) {
+      await dlApi.save({ filename, data: payload });
+    } else {
+      const blob = new Blob([payload], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      Object.assign(document.createElement('a'), { href: url, download: filename }).click();
+      URL.revokeObjectURL(url);
+    }
+    markExported();
+  } catch(e) {
+    if (e?.code !== 'declined') showToast('Export failed: ' + (e?.message || e), 'err');
+  }
+}
+
+function markExported() {
+  lastExportedAt = Date.now();
+  try { localStorage.setItem('pt-last-export', lastExportedAt); } catch(e) {}
+  updateSaveChip();
+}
+
+/* ── Import JSON ──────────────────────────────────────────── */
+document.getElementById('import-input').addEventListener('change', async function(e) {
+  const file = e.target.files[0]; if (!file) return;
+  try {
+    const raw = JSON.parse(await file.text());
+    const list = Array.isArray(raw) ? raw : (raw.projects || []);
+    if (!Array.isArray(list)) throw new Error('No projects array found');
+    S.projects = list.map(migrateProject);
+    await saveData(); render();
+    showToast(`Imported ${S.projects.length} project${S.projects.length !== 1 ? 's' : ''}`);
+  } catch(err) { showToast('Invalid JSON: ' + err.message, 'err'); }
+  this.value = '';
+});
+
+/* ── Import Excel ─────────────────────────────────────────── */
+document.getElementById('import-excel-input').addEventListener('change', async function(e) {
+  const file = e.target.files[0]; if (!file) return;
+  try {
+    const wb   = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+    if (!rows.length) { showToast('No rows found in Excel file', 'err'); return; }
+    S.projects = rows.map(r => migrateProject({
+      name:             r['Project']           || '',
+      desc:             r['Description']       || r['Goal'] || '',
+      priority:         r['Priority']          || 'Medium',
+      stage:            r['Stage']             || r['Current Stage'] || '',
+      stageDesc:        r['Stage Description'] || '',
+      nextDate:         r['Deadline']          || r['As of Date'] || today(),
+      nextDesc:         r['Next Step']         || '',
+      blockersCategory: r['Blockers']          || 'None',
+      blockersDetail:   r['Blockers Detail']   || '',
+      notes:            r['Notes']             || '',
+    }));
+    await saveData(); render();
+    showToast(`Imported ${S.projects.length} project${S.projects.length !== 1 ? 's' : ''} from Excel`);
+  } catch(err) { showToast('Import failed: ' + err.message, 'err'); }
+  this.value = '';
+});
+
+/* ── Add project ──────────────────────────────────────────── */
+function addProject() {
+  const p = mkProject();
+  S.projects.push(p);
+  render(); saveData();
+  requestAnimationFrame(() => {
+    const tr = document.querySelector(`tr.tr1[data-id="${p.id}"]`);
+    if (tr) {
+      const cell = tr.querySelector('.cell-text[data-fld="name"]');
+      if (cell) {
+        cell.focus();
+        const range = document.createRange();
+        range.selectNodeContents(cell);
+        const sel = window.getSelection();
+        sel.removeAllRanges(); sel.addRange(range);
+      }
+    }
+  });
+}
+
+/* ── Theme toggle ─────────────────────────────────────────── */
+document.getElementById('theme-btn').addEventListener('click', () => {
+  const root    = document.documentElement;
+  const current = root.getAttribute('data-theme') || 'system';
+  const next    = current === 'dark' ? 'light' : current === 'light' ? 'system' : 'dark';
+  if (next === 'system') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', next);
+  S.theme = next; saveLocal();
+  document.getElementById('sun-icon').hidden  = (next === 'dark');
+  document.getElementById('moon-icon').hidden = (next !== 'dark');
+});
+
+/* ── Filename dialog ─────────────────────────────────────── */
+let _fnameResolve = null;
+function promptFilename(defaultName, ext) {
+  return new Promise(resolve => {
+    _fnameResolve = resolve;
+    document.getElementById('fname-input').value = defaultName;
+    document.getElementById('fname-ext-label').textContent = ext;
+    document.getElementById('fname-modal').classList.add('open');
+    requestAnimationFrame(() => { const i = document.getElementById('fname-input'); i.focus(); i.select(); });
+  });
+}
+function closeFnameModal(result) {
+  document.getElementById('fname-modal').classList.remove('open');
+  if (_fnameResolve) { _fnameResolve(result); _fnameResolve = null; }
+}
+document.getElementById('fname-ok').addEventListener('click', () => closeFnameModal(document.getElementById('fname-input').value.trim() || null));
+document.getElementById('fname-cancel').addEventListener('click', () => closeFnameModal(null));
+document.getElementById('fname-close').addEventListener('click',  () => closeFnameModal(null));
+document.getElementById('fname-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeFnameModal(null); });
+document.getElementById('fname-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter')  { e.preventDefault(); document.getElementById('fname-ok').click(); }
+  if (e.key === 'Escape') closeFnameModal(null);
+});
+
+/* ── About modal ─────────────────────────────────────────── */
+function openAbout()  { document.getElementById('about-modal').classList.add('open'); }
+function closeAbout() { document.getElementById('about-modal').classList.remove('open'); }
+document.getElementById('about-btn').addEventListener('click', openAbout);
+document.getElementById('about-close').addEventListener('click', closeAbout);
+document.getElementById('about-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeAbout(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeAbout(); closeFnameModal(null); }
+});
+
+/* ── Toast ────────────────────────────────────────────────── */
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type === 'err' ? ' toast-err' : '');
+  t.offsetHeight; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ══════════════════════════════════════════════════════════
+   DOWNLOADS CAPABILITY (for export only)
+══════════════════════════════════════════════════════════ */
+(async () => {
+  try {
+    dlApi = await Promise.race([
+      claude.use('downloads'),
+      new Promise(r => setTimeout(() => r(null), 5000))
+    ]);
+  } catch(e) { dlApi = null; }
+})();
+
+/* ══════════════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════════════ */
+loadLocal();
+if (S.theme && S.theme !== 'system') {
+  document.documentElement.setAttribute('data-theme', S.theme);
+  if (S.theme === 'dark') {
+    document.getElementById('sun-icon').hidden  = true;
+    document.getElementById('moon-icon').hidden = false;
+  }
+}
+render();
+updateSaveChip();
+</script>

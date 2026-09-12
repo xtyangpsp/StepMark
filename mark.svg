@@ -1,0 +1,19 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="c">
+      <rect width="48" height="48" rx="12"/>
+    </clipPath>
+  </defs>
+  <rect width="48" height="48" rx="12" fill="#5C5FEB"/>
+  <g clip-path="url(#c)">
+    <!-- 4 bars, exponential heights, tilted 11° right -->
+    <g transform="rotate(11, 22, 40)">
+      <rect x="5"  y="34" width="5.5" height="6"  rx="1.5" fill="white"/>
+      <rect x="13" y="27" width="5.5" height="13" rx="1.5" fill="white"/>
+      <rect x="21" y="17" width="5.5" height="23" rx="1.5" fill="white"/>
+      <rect x="29" y="4"  width="5.5" height="36" rx="1.5" fill="white"/>
+    </g>
+    <!-- Checkmark in top-left negative space -->
+    <polyline points="5,20 9,25 19,12" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>
