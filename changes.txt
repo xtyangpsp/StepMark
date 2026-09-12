@@ -1,0 +1,5 @@
+v1.0.1:
+1. added calendar picker for the date field
+
+v1.0.0:
+1. first public release
