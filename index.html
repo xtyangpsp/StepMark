@@ -30,6 +30,7 @@
   --sync-local:  #D97706; --sync-local-bg: #FFFBEB;
   --sync-saving: #9295AF; --sync-saving-bg: #F1F2FA;
   --sync-err:    #DC2626; --sync-err-bg: #FEF2F2;
+  --date-cal-filter: none;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -46,6 +47,7 @@
     --sync-local:  #FBBF24; --sync-local-bg: #2D2010;
     --sync-saving: #575B79; --sync-saving-bg: #1C1F38;
     --sync-err:    #F87171; --sync-err-bg: #2D1515;
+    --date-cal-filter: invert(1) brightness(1.8);
     color-scheme: dark;
   }
 }
@@ -62,6 +64,7 @@
   --sync-local:  #FBBF24; --sync-local-bg: #2D2010;
   --sync-saving: #575B79; --sync-saving-bg: #1C1F38;
   --sync-err:    #F87171; --sync-err-bg: #2D1515;
+  --date-cal-filter: invert(1) brightness(1.8);
   color-scheme: dark;
 }
 
@@ -259,14 +262,26 @@ tr.tr1 .cell-text { font-weight: 600; font-size: 13px; color: var(--tx); }
 /* Row 2 cells: descriptions — muted, smaller */
 tr.tr2 .cell-text { font-weight: 400; font-size: 12px; color: var(--tx2); }
 
-/* Date cell */
-.date-text {
+/* Date cell — native <input type="date"> */
+.date-input {
+  background: transparent; border: none; outline: none;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11.5px; color: var(--tx3);
+  font-size: 11.5px; color: var(--tx3); font-weight: 500;
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
+  border-radius: 4px; padding: 1px 3px;
+  cursor: pointer; width: 100%; min-width: 110px;
+  transition: background .1s, box-shadow .1s;
+  color-scheme: inherit;
 }
-.date-text:focus { color: var(--tx); }
+.date-input:hover  { background: var(--accent-l); }
+.date-input:focus  { background: var(--accent-l); box-shadow: inset 0 -2px 0 var(--accent); color: var(--tx); outline: none; }
+.date-input::-webkit-calendar-picker-indicator {
+  opacity: .45; cursor: pointer;
+  filter: var(--date-cal-filter);
+  transition: opacity .1s;
+}
+.date-input:hover::-webkit-calendar-picker-indicator,
+.date-input:focus::-webkit-calendar-picker-indicator { opacity: .85; }
 
 /* Notes span cell */
 td.notes-td { padding: 8px 14px; vertical-align: top; }
@@ -870,7 +885,7 @@ function rowHTML(p) {
       ${stageOpts(p.stage)}
     </select>
   </td>
-  <td>${editCell('nextDate', 'YYYY-MM-DD', p.nextDate, id, 'date-text')}</td>
+  <td><input type="date" class="date-input" data-fld="nextDate" data-pid="${id}" value="${esc(p.nextDate)}" aria-label="Deadline date"></td>
   <td class="sel-td">
     <select class="cell-select" data-fld="blockersCategory" data-pid="${id}" aria-label="Blockers category">
       ${blockerOpts(p.blockersCategory)}
@@ -969,15 +984,16 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Select change: save immediately
+// Select / date-input change: save immediately
 document.getElementById('tbody').addEventListener('change', e => {
-  const sel = e.target.closest('select.cell-select[data-fld]');
-  if (!sel) return;
-  const tr = sel.closest('[data-id]');
+  const ctl = e.target.closest('select.cell-select[data-fld]')
+           || e.target.closest('input.date-input[data-fld]');
+  if (!ctl) return;
+  const tr = ctl.closest('[data-id]');
   if (!tr) return;
   const proj = S.projects.find(x => x.id === tr.dataset.id);
   if (proj) {
-    proj[sel.dataset.fld] = sel.value;
+    proj[ctl.dataset.fld] = ctl.value;
     proj.updatedAt = Date.now();
     const updEl = document.getElementById('upd-' + proj.id);
     if (updEl) updEl.textContent = fmtUpdated(proj.updatedAt);
