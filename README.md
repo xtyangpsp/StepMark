@@ -50,7 +50,7 @@ All project data is stored in **your browser only** (`localStorage` key `pt-v2`)
 
 Because Stride is a single HTML file, hosting it anywhere that serves static files works:
 
-- **GitHub Pages** — enable Pages in repo Settings → Pages, source = main branch / root. Your URL will be `https://xtyangpsp.github.io/stride`.
+- **GitHub Pages** — URL: `https://xtyangpsp.github.io/stride`.
 - **Any static host** — Netlify, Vercel, S3, etc. Drop `index.html` in and point a domain at it.
 - **Local** — just open the file directly in a browser. Export/import still works.
 
