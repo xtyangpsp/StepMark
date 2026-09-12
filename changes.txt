@@ -1,5 +1,6 @@
 v1.0.1:
 1. added calendar picker for the date field
+2. added Lead column, particularly useful for group manager/leader.
 
 v1.0.0:
 1. first public release
