@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo_name_.svg" alt="Stride" width="200" height="56"/>
+  <img src="assets/logo_name.svg" alt="Stride" width="200" height="56"/>
 </p>
 
 <p align="center">
