@@ -1,3 +1,6 @@
+v1.1.1:
+1. activates card mode when viewing on mobile phones. For larger display, it remains the same as older view (table like).
+
 v1.0.1:
 1. added calendar picker for the date field
 2. added Lead column, particularly useful for group manager/leader.

@@ -425,12 +425,79 @@ tr.row-hover .del-btn { opacity: 1; }
 .banner-dismiss:hover { opacity: 1; }
 
 
+/* ── Mobile card view ────────────────────────────────────── */
+.cards-view { display: none; flex-direction: column; gap: 10px; }
+
+.m-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.m-card-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px 8px; gap: 8px;
+  border-bottom: 1px solid var(--border-sub);
+  position: relative;
+}
+.m-card-top .badge { font-size: 11px; padding: 4px 10px; }
+.m-del-wrap { position: relative; flex-shrink: 0; }
+.m-del-wrap .del-btn { opacity: 1; }
+.m-del-wrap .del-confirm {
+  position: absolute; right: 0; top: calc(100% + 6px);
+  z-index: 30;
+}
+.m-card-body {
+  padding: 12px; display: flex; flex-direction: column; gap: 10px;
+}
+.m-name { font-size: 15px; font-weight: 700; color: var(--tx); }
+.m-desc { font-size: 13px; color: var(--tx2); }
+.m-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px;
+}
+.m-field { display: flex; flex-direction: column; gap: 3px; }
+.m-label {
+  font-size: 10px; font-weight: 700; color: var(--tx3);
+  text-transform: uppercase; letter-spacing: .07em;
+}
+.m-section { display: flex; flex-direction: column; gap: 3px; }
+.m-card-footer {
+  display: flex; justify-content: flex-end; align-items: center;
+  padding-top: 4px; border-top: 1px solid var(--border-sub);
+  margin-top: 2px;
+}
+.m-upd {
+  font-size: 10.5px; color: var(--tx3);
+  font-family: 'JetBrains Mono', monospace;
+}
+/* Make cell-text & inputs look natural inside cards */
+.m-card .cell-text { font-size: 13px; }
+.m-card .cell-select { font-size: 13px; padding: 2px 0; }
+.m-card .date-input { font-size: 12px; min-width: unset; width: 100%; }
+.m-card .m-name.cell-text { font-size: 15px; font-weight: 700; }
+.m-card .m-desc.cell-text { font-size: 13px; color: var(--tx2); font-weight: 400; }
+
+/* Mobile add-project button inside cards-view */
+.m-add-btn {
+  width: 100%; padding: 13px; border: 1.5px dashed var(--border);
+  border-radius: 12px; background: transparent; cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 600; color: var(--tx3);
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: background .1s, color .1s, border-color .1s;
+}
+.m-add-btn:hover { background: var(--surface); color: var(--accent-tx); border-color: var(--accent); }
+
 /* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Hide table; show cards */
+  .table-card { display: none !important; }
+  .cards-view { display: flex; }
+  /* Topbar: hide count + sync chip on very small */
+  .count-badge { display: none; }
+}
 @media (max-width: 640px) {
   .topbar, .ctrl-bar, .main { padding-inline: 16px; }
   .appname { font-size: 13px; }
   .ctrl-bar { flex-wrap: nowrap; overflow-x: auto; }
-  .count-badge, .sync-chip { display: none; }
+  .sync-chip { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, .sync-saving .sync-dot { animation: none !important; transition: none !important; }
@@ -587,7 +654,7 @@ tr.row-hover .del-btn { opacity: 1; }
 
 <!-- ── Main ──────────────────────────────────────────────── -->
 <main class="main">
-  <div class="card">
+  <div class="card table-card">
     <table aria-label="Project progress tracker">
       <colgroup>
         <col class="c-proj"> <col class="c-pri"> <col class="c-lead"> <col class="c-stage">
@@ -620,12 +687,15 @@ tr.row-hover .del-btn { opacity: 1; }
       Add project
     </button>
   </div>
+  <!-- Mobile card view (shown on narrow screens) -->
+  <div class="cards-view" id="cards-view" aria-label="Projects (card view)"></div>
+
   <div class="footer" role="status" aria-live="polite">
     <div class="sum-i"><div class="sum-dot" style="background:var(--hi)"></div><span id="s-hi">0 High</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--md)"></div><span id="s-md">0 Medium</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--lo)"></div><span id="s-lo">0 Low</span></div>
     <span class="footer-hint">Two rows per project: row 1 for key info · row 2 for details · Click priority badge to cycle</span>
-    <span class="version-tag">v1.0.1</span>
+    <span class="version-tag">v1.1.0</span>
   </div>
 
   <!-- Export reminder banner — shown when there are changes since last export -->
@@ -677,7 +747,7 @@ tr.row-hover .del-btn { opacity: 1; }
       </div>
       <div class="modal-row">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
-        <span>Version&ensp;<strong>v1.0.1</strong></span>
+        <span>Version&ensp;<strong>v1.1.0</strong></span>
       </div>
       <div class="modal-row" style="margin-top:4px;padding-top:12px;border-top:1px solid var(--border-sub);flex-direction:column;align-items:flex-start;gap:6px">
         <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3)">Storage</span>
@@ -918,11 +988,81 @@ function rowHTML(p) {
 </tr>`;
 }
 
+/* ── Mobile card HTML ─────────────────────────────────────── */
+function cardHTML(p) {
+  const id = p.id;
+  return `
+<div class="m-card" data-id="${id}">
+  <div class="m-card-top">
+    <span class="badge ${badgeCls(p.priority)}" data-id="${id}" role="button" tabindex="0"
+      aria-label="Priority: ${p.priority}. Click to cycle.">
+      <span class="dot" aria-hidden="true"></span>${p.priority}
+    </span>
+    <div class="m-del-wrap">
+      <button class="del-btn" data-id="${id}" aria-label="Delete project">${DEL_ICON}</button>
+    </div>
+  </div>
+  <div class="m-card-body">
+    ${editCell('name', 'Project name', p.name, id, 'm-name')}
+    ${editCell('desc', 'Short description…', p.desc, id, 'm-desc')}
+    <div class="m-grid">
+      <div class="m-field">
+        <span class="m-label">Lead</span>
+        ${editCell('lead', 'Unassigned', p.lead, id)}
+      </div>
+      <div class="m-field">
+        <span class="m-label">Stage</span>
+        <select class="cell-select sel-stage" data-fld="stage" data-pid="${id}" aria-label="Stage">
+          ${stageOpts(p.stage)}
+        </select>
+        ${editCell('stageDesc', 'Stage details…', p.stageDesc, id)}
+      </div>
+      <div class="m-field">
+        <span class="m-label">Deadline</span>
+        <input type="date" class="date-input" data-fld="nextDate" data-pid="${id}" value="${esc(p.nextDate)}" aria-label="Deadline date">
+      </div>
+      <div class="m-field">
+        <span class="m-label">Blockers</span>
+        <select class="cell-select" data-fld="blockersCategory" data-pid="${id}" aria-label="Blockers category">
+          ${blockerOpts(p.blockersCategory)}
+        </select>
+        ${editCell('blockersDetail', 'Describe the blocker…', p.blockersDetail, id)}
+      </div>
+    </div>
+    <div class="m-section">
+      <span class="m-label">Next Step</span>
+      ${editCell('nextDesc', 'What needs to happen…', p.nextDesc, id)}
+    </div>
+    <div class="m-section">
+      <span class="m-label">Notes</span>
+      ${editCell('notes', 'Notes…', p.notes, id)}
+    </div>
+    <div class="m-card-footer">
+      <span class="m-upd" data-upd-id="${id}">${fmtUpdated(p.updatedAt)}</span>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderCards() {
+  const rows = getRows();
+  const cv = document.getElementById('cards-view');
+  cv.innerHTML = rows.map(cardHTML).join('') +
+    `<button class="m-add-btn" id="m-add-btn" aria-label="Add a new project">
+      <svg width="12" height="12" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <line x1="5.5" y1="1" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="10" y2="5.5"/>
+      </svg>
+      Add project
+    </button>`;
+  document.getElementById('m-add-btn').addEventListener('click', addProject);
+}
+
 function render() {
   const rows  = getRows();
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = rows.map(rowHTML).join('');
   document.getElementById('empty-state').style.display = rows.length ? 'none' : 'block';
+  renderCards();
   updateCounts();
 
   document.querySelectorAll('th[data-s]').forEach(th => {
@@ -970,8 +1110,10 @@ document.addEventListener('blur', e => {
   if (proj) {
     proj[ct.dataset.fld] = ct.innerText.trim();
     proj.updatedAt = Date.now();
+    const t = fmtUpdated(proj.updatedAt);
     const updEl = document.getElementById('upd-' + proj.id);
-    if (updEl) updEl.textContent = fmtUpdated(proj.updatedAt);
+    if (updEl) updEl.textContent = t;
+    document.querySelectorAll(`[data-upd-id="${proj.id}"]`).forEach(el => el.textContent = t);
     saveData();
     updateCounts();
   }
@@ -1006,8 +1148,10 @@ document.getElementById('tbody').addEventListener('change', e => {
   if (proj) {
     proj[ctl.dataset.fld] = ctl.value;
     proj.updatedAt = Date.now();
+    const t = fmtUpdated(proj.updatedAt);
     const updEl = document.getElementById('upd-' + proj.id);
-    if (updEl) updEl.textContent = fmtUpdated(proj.updatedAt);
+    if (updEl) updEl.textContent = t;
+    document.querySelectorAll(`[data-upd-id="${proj.id}"]`).forEach(el => el.textContent = t);
     saveData();
   }
 });
@@ -1043,8 +1187,8 @@ document.addEventListener('click', e => {
   // Delete: show confirm
   const del = e.target.closest('.del-btn[data-id]');
   if (del) {
-    const td = del.closest('td.del-td');
-    td.innerHTML = `<div class="del-confirm">
+    const container = del.closest('td.del-td') || del.closest('.m-del-wrap');
+    container.innerHTML = `<div class="del-confirm">
       <button class="del-confirm-yes" data-id="${del.dataset.id}" aria-label="Confirm delete">Delete</button>
       <button class="del-confirm-no"  data-id="${del.dataset.id}" aria-label="Cancel">Cancel</button>
     </div>`;
