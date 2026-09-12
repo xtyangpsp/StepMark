@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 299 120">
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 681 273.3">
   <!-- Generator: Adobe Illustrator 29.3.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 146)  -->
   <defs>
     <style>
@@ -10,15 +10,25 @@
       .st2 {
         fill: #111328;
         font-family: HelveticaNeue-Bold, 'Helvetica Neue';
-        font-size: 52px;
+        font-size: 118.4px;
       }
 
       .st2, .st3 {
         font-weight: 700;
+      }
+
+      .st2, .st3, .st4 {
         isolation: isolate;
       }
 
-      .st4 {
+      .st3 {
+        fill: #666;
+        font-family: HelveticaNeue-BoldItalic, 'Helvetica Neue';
+        font-size: 47.8px;
+        font-style: italic;
+      }
+
+      .st5 {
         fill: #fff;
       }
 
@@ -29,39 +39,36 @@
         stroke-width: 7px;
       }
 
-      .st5 {
+      .st6 {
         fill: #5c5feb;
       }
 
-      .st3 {
-        fill: #666;
-        font-family: HelveticaNeue-BoldItalic, 'Helvetica Neue';
-        font-size: 21px;
-        font-style: italic;
-      }
-
-      .st6 {
+      .st7 {
         clip-path: url(#clippath);
       }
     </style>
     <clipPath id="clippath">
-      <rect class="st0" width="120" height="120" rx="28" ry="28"/>
+      <rect class="st0" width="273.3" height="273.3" rx="63.8" ry="63.8"/>
     </clipPath>
   </defs>
-  <rect class="st4" width="299" height="120"/>
-  <text class="st2" transform="translate(135.6 63.9)"><tspan x="0" y="0">Stride</tspan></text>
+  <rect class="st5" width="681" height="273.3"/>
+  <g class="st4">
+    <text class="st2" transform="translate(308.8 145.5)"><tspan x="0" y="0">Stride</tspan></text>
+  </g>
   <g>
-    <rect class="st5" width="120" height="120" rx="28" ry="28"/>
-    <g class="st6">
+    <rect class="st6" width="273.3" height="273.3" rx="28" ry="28"/>
+    <g class="st7">
       <g>
         <g>
-          <rect class="st4" x="9.6" y="66.8" width="30" height="22" rx="5" ry="5" transform="translate(-56.5 87.1) rotate(-79)"/>
-          <rect class="st4" x="29.3" y="60.8" width="54" height="22" rx="5" ry="5" transform="translate(-24.9 113.4) rotate(-79)"/>
-          <rect class="st4" x="45.8" y="50.8" width="86" height="22" rx="5" ry="5" transform="translate(11.2 137.2) rotate(-79)"/>
+          <rect class="st5" x="21.8" y="152.1" width="68.3" height="50.1" rx="5" ry="5" transform="translate(-128.7 198.3) rotate(-79)"/>
+          <rect class="st5" x="66.8" y="138.6" width="123" height="50.1" rx="5" ry="5" transform="translate(-56.8 258.3) rotate(-79)"/>
+          <rect class="st5" x="104.3" y="115.8" width="195.9" height="50.1" rx="5" ry="5" transform="translate(25.5 312.5) rotate(-79)"/>
         </g>
-        <polyline class="st1" points="8 52 20 66 44 34"/>
+        <polyline class="st1" points="18.2 118.4 45.6 150.3 100.2 77.4"/>
       </g>
     </g>
   </g>
-  <text class="st3" transform="translate(135.6 101.1)"><tspan x="0" y="0">Project Tracker</tspan></text>
+  <g class="st4">
+    <text class="st3" transform="translate(308.8 230.3)"><tspan x="0" y="0">Project Tracker</tspan></text>
+  </g>
 </svg>
