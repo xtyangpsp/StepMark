@@ -312,15 +312,17 @@ td.sel-desc-td { padding: 3px 14px 9px; }
 
 /* ── Priority (span-cell) ────────────────────────────────── */
 td.pri-td { padding: 6px 10px; text-align: center; }
-.badge {
-  display: inline-flex; align-items: center; gap: 5px;
+.pri-select {
+  display: inline-block;
   padding: 3px 9px; border-radius: 999px; border: 1px solid transparent;
   font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
-  cursor: pointer; user-select: none; white-space: nowrap; transition: filter .1s;
+  font-family: inherit; cursor: pointer; white-space: nowrap; transition: filter .1s;
+  appearance: none; -webkit-appearance: none;
+  text-align: center; text-align-last: center;
 }
-.badge:hover { filter: brightness(.9); }
-.badge:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.pri-select:hover { filter: brightness(.9); }
+.pri-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pri-select option { background: var(--surface); color: var(--tx); font-weight: 600; }
 .b-hi { background: var(--hi-bg); color: var(--hi); border-color: var(--hi-br); }
 .b-md { background: var(--md-bg); color: var(--md); border-color: var(--md-br); }
 .b-lo { background: var(--lo-bg); color: var(--lo); border-color: var(--lo-br); }
@@ -445,7 +447,7 @@ tr.row-hover .del-btn { opacity: 1; }
   border-bottom: 1px solid var(--border-sub);
   position: relative;
 }
-.m-card-top .badge { font-size: 11px; padding: 4px 10px; }
+.m-card-top .pri-select { font-size: 11px; padding: 4px 10px; }
 .m-del-wrap { position: relative; flex-shrink: 0; }
 .m-del-wrap .del-btn { opacity: 1; }
 .m-del-wrap .del-confirm {
@@ -705,7 +707,7 @@ tr.row-hover .del-btn { opacity: 1; }
     <div class="sum-i"><div class="sum-dot" style="background:var(--hi)"></div><span id="s-hi">0 High</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--md)"></div><span id="s-md">0 Medium</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--lo)"></div><span id="s-lo">0 Low</span></div>
-    <span class="footer-hint">Two rows per project: row 1 for key info · row 2 for details · Click priority badge to cycle</span>
+    <span class="footer-hint">Two rows per project: row 1 for key info · row 2 for details</span>
     <a href="https://github.com/xtyangpsp/Stride/issues" target="_blank" rel="noopener" class="footer-feedback">Feedback</a>
     <span class="version-tag">v1.1.0</span>
   </div>
@@ -901,8 +903,8 @@ function migrateProject(p) {
   };
 }
 
-function nextPri(p) { return PRI_CYCLE[(PRI_CYCLE.indexOf(p) + 1) % 3]; }
 function badgeCls(p) { return p === 'High' ? 'b-hi' : p === 'Medium' ? 'b-md' : 'b-lo'; }
+function priOpts(cur) { return PRI_CYCLE.map(p => `<option value="${p}"${p===cur?' selected':''}>${p}</option>`).join(''); }
 
 function fmtUpdated(ts) {
   if (!ts) return '—';
@@ -969,10 +971,9 @@ function rowHTML(p) {
 <tr class="tr1" data-id="${id}">
   <td>${editCell('name', 'Project name', p.name, id)}</td>
   <td class="span-cell pri-td" rowspan="2">
-    <span class="badge ${badgeCls(p.priority)}" data-id="${id}" role="button" tabindex="0"
-      aria-label="Priority: ${p.priority}. Click to cycle.">
-      <span class="dot" aria-hidden="true"></span>${p.priority}
-    </span>
+    <select class="pri-select ${badgeCls(p.priority)}" data-fld="priority" data-pid="${id}" aria-label="Priority">
+      ${priOpts(p.priority)}
+    </select>
   </td>
   <td class="span-cell lead-td" rowspan="2">
     ${editCell('lead', 'Unassigned', p.lead, id)}
@@ -1010,10 +1011,9 @@ function cardHTML(p) {
   return `
 <div class="m-card" data-id="${id}">
   <div class="m-card-top">
-    <span class="badge ${badgeCls(p.priority)}" data-id="${id}" role="button" tabindex="0"
-      aria-label="Priority: ${p.priority}. Click to cycle.">
-      <span class="dot" aria-hidden="true"></span>${p.priority}
-    </span>
+    <select class="pri-select ${badgeCls(p.priority)}" data-fld="priority" data-pid="${id}" aria-label="Priority">
+      ${priOpts(p.priority)}
+    </select>
     <div class="m-del-wrap">
       <button class="del-btn" data-id="${id}" aria-label="Delete project">${DEL_ICON}</button>
     </div>
@@ -1145,24 +1145,26 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey && e.target.closest('.cell-text[contenteditable]')) {
     e.preventDefault(); e.target.blur();
   }
-  if ((e.key === ' ' || e.key === 'Enter') && e.target.classList.contains('badge')) {
-    e.preventDefault();
-    const proj = S.projects.find(x => x.id === e.target.dataset.id);
-    if (proj) { proj.priority = nextPri(proj.priority); proj.updatedAt = Date.now(); saveData(); render(); }
-  }
 });
 
-// Select / date-input change: save immediately
-document.getElementById('tbody').addEventListener('change', e => {
+// Select / date-input change: save immediately (table + card views)
+document.addEventListener('change', e => {
   const ctl = e.target.closest('select.cell-select[data-fld]')
+           || e.target.closest('select.pri-select[data-fld]')
            || e.target.closest('input.date-input[data-fld]');
   if (!ctl) return;
-  const tr = ctl.closest('[data-id]');
-  if (!tr) return;
-  const proj = S.projects.find(x => x.id === tr.dataset.id);
+  const container = ctl.closest('[data-id]');
+  if (!container) return;
+  const proj = S.projects.find(x => x.id === container.dataset.id);
   if (proj) {
     proj[ctl.dataset.fld] = ctl.value;
     proj.updatedAt = Date.now();
+    if (ctl.dataset.fld === 'priority') {
+      document.querySelectorAll(`.pri-select[data-pid="${proj.id}"]`).forEach(s => {
+        s.className = 'pri-select ' + badgeCls(proj.priority);
+      });
+      updateCounts();
+    }
     const t = fmtUpdated(proj.updatedAt);
     const updEl = document.getElementById('upd-' + proj.id);
     if (updEl) updEl.textContent = t;
@@ -1192,13 +1194,6 @@ tbody.addEventListener('mouseleave', () => setRowHover(null));
 
 // Click dispatch
 document.addEventListener('click', e => {
-  // Priority badge
-  const badge = e.target.closest('.badge[data-id]');
-  if (badge) {
-    const proj = S.projects.find(x => x.id === badge.dataset.id);
-    if (proj) { proj.priority = nextPri(proj.priority); proj.updatedAt = Date.now(); saveData(); render(); }
-    return;
-  }
   // Delete: show confirm
   const del = e.target.closest('.del-btn[data-id]');
   if (del) {
