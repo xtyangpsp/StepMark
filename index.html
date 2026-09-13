@@ -1379,6 +1379,7 @@ document.getElementById('import-excel-input').addEventListener('change', async f
       blockersCategory: r['Blockers']          || 'None',
       blockersDetail:   r['Blockers Detail']   || '',
       notes:            r['Notes']             || '',
+      updatedAt:        r['Last Updated'] ? (new Date(r['Last Updated']).getTime() || Date.now()) : Date.now(),
     }));
     await saveData(); render();
     showToast(`Imported ${S.projects.length} project${S.projects.length !== 1 ? 's' : ''} from Excel`);

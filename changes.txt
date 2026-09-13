@@ -1,6 +1,7 @@
 v1.1.0:
 1. activates card mode when viewing on mobile phones. For larger display, it remains the same as older view (table like).
 2. added link to github issues page for feedback or bug report.
+3. fixed a bug that the last updated value was not kept when importing.
 
 v1.0.1:
 1. added calendar picker for the date field
