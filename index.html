@@ -1,4 +1,3 @@
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Stride</title>
 <link rel="icon" href="assets/mark.svg?v=2" type="image/svg+xml">
 
@@ -31,7 +30,6 @@
   --sync-local:  #D97706; --sync-local-bg: #FFFBEB;
   --sync-saving: #9295AF; --sync-saving-bg: #F1F2FA;
   --sync-err:    #DC2626; --sync-err-bg: #FEF2F2;
-  --date-cal-filter: none;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -48,7 +46,6 @@
     --sync-local:  #FBBF24; --sync-local-bg: #2D2010;
     --sync-saving: #575B79; --sync-saving-bg: #1C1F38;
     --sync-err:    #F87171; --sync-err-bg: #2D1515;
-    --date-cal-filter: invert(1) brightness(1.8);
     color-scheme: dark;
   }
 }
@@ -65,7 +62,6 @@
   --sync-local:  #FBBF24; --sync-local-bg: #2D2010;
   --sync-saving: #575B79; --sync-saving-bg: #1C1F38;
   --sync-err:    #F87171; --sync-err-bg: #2D1515;
-  --date-cal-filter: invert(1) brightness(1.8);
   color-scheme: dark;
 }
 
@@ -195,15 +191,14 @@ body {
   border-radius: 12px; overflow: hidden; overflow-x: auto;
 }
 table {
-  width: 100%; border-collapse: collapse; min-width: 1260px; table-layout: fixed;
+  width: 100%; border-collapse: collapse; min-width: 1060px; table-layout: fixed;
 }
 col.c-proj  { width: 162px; }
 col.c-pri   { width: 90px; }
-col.c-lead  { width: 100px; }
-col.c-stage { width: 210px; }
-col.c-next  { width: 176px; }
-col.c-block { width: 200px; }
-col.c-notes { width: auto; min-width: 140px; }
+col.c-stage { width: 170px; }
+col.c-next  { width: 134px; }
+col.c-block { width: 158px; }
+col.c-notes { width: auto; }
 col.c-upd   { width: 98px; }
 col.c-del   { width: 42px; }
 
@@ -264,26 +259,14 @@ tr.tr1 .cell-text { font-weight: 600; font-size: 13px; color: var(--tx); }
 /* Row 2 cells: descriptions — muted, smaller */
 tr.tr2 .cell-text { font-weight: 400; font-size: 12px; color: var(--tx2); }
 
-/* Date cell — native <input type="date"> */
-.date-input {
-  background: transparent; border: none; outline: none;
+/* Date cell */
+.date-text {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11.5px; color: var(--tx3); font-weight: 500;
+  font-size: 11.5px; color: var(--tx3);
   font-variant-numeric: tabular-nums;
-  border-radius: 4px; padding: 1px 3px;
-  cursor: pointer; width: 100%; min-width: 110px;
-  transition: background .1s, box-shadow .1s;
-  color-scheme: inherit;
+  font-weight: 500;
 }
-.date-input:hover  { background: var(--accent-l); }
-.date-input:focus  { background: var(--accent-l); box-shadow: inset 0 -2px 0 var(--accent); color: var(--tx); outline: none; }
-.date-input::-webkit-calendar-picker-indicator {
-  opacity: .45; cursor: pointer;
-  filter: var(--date-cal-filter);
-  transition: opacity .1s;
-}
-.date-input:hover::-webkit-calendar-picker-indicator,
-.date-input:focus::-webkit-calendar-picker-indicator { opacity: .85; }
+.date-text:focus { color: var(--tx); }
 
 /* Notes span cell */
 td.notes-td { padding: 8px 14px; vertical-align: top; }
@@ -320,10 +303,6 @@ td.pri-td { padding: 6px 10px; text-align: center; }
 .b-hi { background: var(--hi-bg); color: var(--hi); border-color: var(--hi-br); }
 .b-md { background: var(--md-bg); color: var(--md); border-color: var(--md-br); }
 .b-lo { background: var(--lo-bg); color: var(--lo); border-color: var(--lo-br); }
-
-/* ── Lead (span-cell) ───────────────────────────────────── */
-td.lead-td { padding: 6px 10px; text-align: center; vertical-align: middle; }
-td.lead-td .cell-text { text-align: center; font-size: 12px; }
 
 /* ── Last Updated (span-cell) ────────────────────────────── */
 td.upd-td {
@@ -426,82 +405,12 @@ tr.row-hover .del-btn { opacity: 1; }
 .banner-dismiss:hover { opacity: 1; }
 
 
-/* ── Mobile card view ────────────────────────────────────── */
-.cards-view { display: none; flex-direction: column; gap: 10px; }
-
-.m-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; overflow: hidden;
-}
-.m-card-top {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 12px 8px; gap: 8px;
-  border-bottom: 1px solid var(--border-sub);
-  position: relative;
-}
-.m-card-top .badge { font-size: 11px; padding: 4px 10px; }
-.m-del-wrap { position: relative; flex-shrink: 0; }
-.m-del-wrap .del-btn { opacity: 1; }
-.m-del-wrap .del-confirm {
-  position: absolute; right: 0; top: calc(100% + 6px);
-  z-index: 30;
-}
-.m-card-body {
-  padding: 12px; display: flex; flex-direction: column; gap: 10px;
-}
-.m-name { font-size: 15px; font-weight: 700; color: var(--tx); }
-.m-desc { font-size: 13px; color: var(--tx2); }
-.m-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px;
-}
-.m-field { display: flex; flex-direction: column; gap: 3px; }
-.m-label {
-  font-size: 10px; font-weight: 700; color: var(--tx3);
-  text-transform: uppercase; letter-spacing: .07em;
-}
-.m-section { display: flex; flex-direction: column; gap: 3px; }
-.m-card-footer {
-  display: flex; justify-content: flex-end; align-items: center;
-  padding-top: 4px; border-top: 1px solid var(--border-sub);
-  margin-top: 2px;
-}
-.m-upd {
-  font-size: 10.5px; color: var(--tx3);
-  font-family: 'JetBrains Mono', monospace;
-}
-/* Make cell-text & inputs look natural inside cards */
-.m-card .cell-text { font-size: 13px; }
-.m-card .cell-select { font-size: 13px; padding: 2px 0; }
-.m-card .date-input { font-size: 12px; min-width: unset; width: 100%; }
-.m-card .m-name.cell-text { font-size: 15px; font-weight: 700; }
-.m-card .m-desc.cell-text { font-size: 13px; color: var(--tx2); font-weight: 400; }
-
-/* Mobile add-project button inside cards-view */
-.m-add-btn {
-  width: 100%; padding: 13px; border: 1.5px dashed var(--border);
-  border-radius: 12px; background: transparent; cursor: pointer;
-  font-family: inherit; font-size: 13px; font-weight: 600; color: var(--tx3);
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-  transition: background .1s, color .1s, border-color .1s;
-}
-.m-add-btn:hover { background: var(--surface); color: var(--accent-tx); border-color: var(--accent); }
-
 /* ── Responsive ──────────────────────────────────────────── */
-@media (max-width: 768px) {
-  /* Hide table; show cards */
-  .table-card { display: none !important; }
-  .cards-view { display: flex; }
-  /* Topbar: collapse Export/Import to icon-only */
-  .btn-label   { display: none; }
-  .btn-chevron { display: none; }
-  .btn-ghost   { padding: 7px 9px; }
-  .count-badge { display: none; }
-}
 @media (max-width: 640px) {
   .topbar, .ctrl-bar, .main { padding-inline: 16px; }
   .appname { font-size: 13px; }
   .ctrl-bar { flex-wrap: nowrap; overflow-x: auto; }
-  .sync-chip { display: none; }
+  .count-badge, .sync-chip { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, .sync-saving .sync-dot { animation: none !important; transition: none !important; }
@@ -590,8 +499,8 @@ tr.row-hover .del-btn { opacity: 1; }
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
           <path d="M6 1v8M3 6l3 3 3-3"/><line x1="1" y1="11" x2="11" y2="11"/>
         </svg>
-        <span class="btn-label">Export</span>
-        <svg class="btn-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
+        Export
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
       </button>
       <div class="menu-dropdown" id="exp-dropdown" role="menu">
         <button class="menu-item" id="exp-excel" role="menuitem"><span class="menu-item-icon">📊</span> Excel (.xlsx)</button>
@@ -603,8 +512,8 @@ tr.row-hover .del-btn { opacity: 1; }
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
           <path d="M6 9V1M3 4l3-3 3 3"/><line x1="1" y1="11" x2="11" y2="11"/>
         </svg>
-        <span class="btn-label">Import</span>
-        <svg class="btn-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
+        Import
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
       </button>
       <div class="menu-dropdown" id="imp-dropdown" role="menu">
         <button class="menu-item" id="imp-excel" role="menuitem"><span class="menu-item-icon">📊</span> Excel (.xlsx)</button>
@@ -658,10 +567,10 @@ tr.row-hover .del-btn { opacity: 1; }
 
 <!-- ── Main ──────────────────────────────────────────────── -->
 <main class="main">
-  <div class="card table-card">
+  <div class="card">
     <table aria-label="Project progress tracker">
       <colgroup>
-        <col class="c-proj"> <col class="c-pri"> <col class="c-lead"> <col class="c-stage">
+        <col class="c-proj"> <col class="c-pri">   <col class="c-stage">
         <col class="c-next"> <col class="c-block"> <col class="c-notes">
         <col class="c-upd">  <col class="c-del">
       </colgroup>
@@ -669,7 +578,6 @@ tr.row-hover .del-btn { opacity: 1; }
         <tr>
           <th class="sort-th" data-s="name">Project</th>
           <th>Priority</th>
-          <th>Lead</th>
           <th>Stage</th>
           <th class="sort-th" data-s="nextDate">Next Step</th>
           <th>Blockers</th>
@@ -691,15 +599,12 @@ tr.row-hover .del-btn { opacity: 1; }
       Add project
     </button>
   </div>
-  <!-- Mobile card view (shown on narrow screens) -->
-  <div class="cards-view" id="cards-view" aria-label="Projects (card view)"></div>
-
   <div class="footer" role="status" aria-live="polite">
     <div class="sum-i"><div class="sum-dot" style="background:var(--hi)"></div><span id="s-hi">0 High</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--md)"></div><span id="s-md">0 Medium</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--lo)"></div><span id="s-lo">0 Low</span></div>
     <span class="footer-hint">Two rows per project: row 1 for key info · row 2 for details · Click priority badge to cycle</span>
-    <span class="version-tag">v1.1.0</span>
+    <span class="version-tag">v1.0.0</span>
   </div>
 
   <!-- Export reminder banner — shown when there are changes since last export -->
@@ -751,7 +656,7 @@ tr.row-hover .del-btn { opacity: 1; }
       </div>
       <div class="modal-row">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
-        <span>Version&ensp;<strong>v1.1.0</strong></span>
+        <span>Version&ensp;<strong>v1.0.0</strong></span>
       </div>
       <div class="modal-row" style="margin-top:4px;padding-top:12px;border-top:1px solid var(--border-sub);flex-direction:column;align-items:flex-start;gap:6px">
         <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3)">Storage</span>
@@ -860,7 +765,6 @@ function mkProject() {
   return {
     id: mkId(), name: '', desc: '',
     priority: 'Medium',
-    lead: '',
     stage: 'Planning', stageDesc: '',
     nextDate: today(), nextDesc: '',
     blockersCategory: 'None', blockersDetail: '',
@@ -877,7 +781,6 @@ function migrateProject(p) {
     name:             p.name             || '',
     desc:             p.desc             || p.goal          || '',
     priority:         PRI_CYCLE.includes(p.priority) ? p.priority : 'Medium',
-    lead:             p.lead             || '',
     stage:            STAGE_OPTS.includes(oldStage) ? oldStage : 'Planning',
     stageDesc:        p.stageDesc        || (STAGE_OPTS.includes(oldStage) ? '' : oldStage),
     nextDate:         p.nextDate         || p.date          || today(),
@@ -962,15 +865,12 @@ function rowHTML(p) {
       <span class="dot" aria-hidden="true"></span>${p.priority}
     </span>
   </td>
-  <td class="span-cell lead-td" rowspan="2">
-    ${editCell('lead', 'Unassigned', p.lead, id)}
-  </td>
   <td class="sel-td">
     <select class="cell-select sel-stage" data-fld="stage" data-pid="${id}" aria-label="Stage">
       ${stageOpts(p.stage)}
     </select>
   </td>
-  <td><input type="date" class="date-input" data-fld="nextDate" data-pid="${id}" value="${esc(p.nextDate)}" aria-label="Deadline date"></td>
+  <td>${editCell('nextDate', 'YYYY-MM-DD', p.nextDate, id, 'date-text')}</td>
   <td class="sel-td">
     <select class="cell-select" data-fld="blockersCategory" data-pid="${id}" aria-label="Blockers category">
       ${blockerOpts(p.blockersCategory)}
@@ -992,81 +892,11 @@ function rowHTML(p) {
 </tr>`;
 }
 
-/* ── Mobile card HTML ─────────────────────────────────────── */
-function cardHTML(p) {
-  const id = p.id;
-  return `
-<div class="m-card" data-id="${id}">
-  <div class="m-card-top">
-    <span class="badge ${badgeCls(p.priority)}" data-id="${id}" role="button" tabindex="0"
-      aria-label="Priority: ${p.priority}. Click to cycle.">
-      <span class="dot" aria-hidden="true"></span>${p.priority}
-    </span>
-    <div class="m-del-wrap">
-      <button class="del-btn" data-id="${id}" aria-label="Delete project">${DEL_ICON}</button>
-    </div>
-  </div>
-  <div class="m-card-body">
-    ${editCell('name', 'Project name', p.name, id, 'm-name')}
-    ${editCell('desc', 'Short description…', p.desc, id, 'm-desc')}
-    <div class="m-grid">
-      <div class="m-field">
-        <span class="m-label">Lead</span>
-        ${editCell('lead', 'Unassigned', p.lead, id)}
-      </div>
-      <div class="m-field">
-        <span class="m-label">Stage</span>
-        <select class="cell-select sel-stage" data-fld="stage" data-pid="${id}" aria-label="Stage">
-          ${stageOpts(p.stage)}
-        </select>
-        ${editCell('stageDesc', 'Stage details…', p.stageDesc, id)}
-      </div>
-      <div class="m-field">
-        <span class="m-label">Deadline</span>
-        <input type="date" class="date-input" data-fld="nextDate" data-pid="${id}" value="${esc(p.nextDate)}" aria-label="Deadline date">
-      </div>
-      <div class="m-field">
-        <span class="m-label">Blockers</span>
-        <select class="cell-select" data-fld="blockersCategory" data-pid="${id}" aria-label="Blockers category">
-          ${blockerOpts(p.blockersCategory)}
-        </select>
-        ${editCell('blockersDetail', 'Describe the blocker…', p.blockersDetail, id)}
-      </div>
-    </div>
-    <div class="m-section">
-      <span class="m-label">Next Step</span>
-      ${editCell('nextDesc', 'What needs to happen…', p.nextDesc, id)}
-    </div>
-    <div class="m-section">
-      <span class="m-label">Notes</span>
-      ${editCell('notes', 'Notes…', p.notes, id)}
-    </div>
-    <div class="m-card-footer">
-      <span class="m-upd" data-upd-id="${id}">${fmtUpdated(p.updatedAt)}</span>
-    </div>
-  </div>
-</div>`;
-}
-
-function renderCards() {
-  const rows = getRows();
-  const cv = document.getElementById('cards-view');
-  cv.innerHTML = rows.map(cardHTML).join('') +
-    `<button class="m-add-btn" id="m-add-btn" aria-label="Add a new project">
-      <svg width="12" height="12" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-        <line x1="5.5" y1="1" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="10" y2="5.5"/>
-      </svg>
-      Add project
-    </button>`;
-  document.getElementById('m-add-btn').addEventListener('click', addProject);
-}
-
 function render() {
   const rows  = getRows();
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = rows.map(rowHTML).join('');
   document.getElementById('empty-state').style.display = rows.length ? 'none' : 'block';
-  renderCards();
   updateCounts();
 
   document.querySelectorAll('th[data-s]').forEach(th => {
@@ -1114,10 +944,8 @@ document.addEventListener('blur', e => {
   if (proj) {
     proj[ct.dataset.fld] = ct.innerText.trim();
     proj.updatedAt = Date.now();
-    const t = fmtUpdated(proj.updatedAt);
     const updEl = document.getElementById('upd-' + proj.id);
-    if (updEl) updEl.textContent = t;
-    document.querySelectorAll(`[data-upd-id="${proj.id}"]`).forEach(el => el.textContent = t);
+    if (updEl) updEl.textContent = fmtUpdated(proj.updatedAt);
     saveData();
     updateCounts();
   }
@@ -1141,21 +969,18 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Select / date-input change: save immediately
+// Select change: save immediately
 document.getElementById('tbody').addEventListener('change', e => {
-  const ctl = e.target.closest('select.cell-select[data-fld]')
-           || e.target.closest('input.date-input[data-fld]');
-  if (!ctl) return;
-  const tr = ctl.closest('[data-id]');
+  const sel = e.target.closest('select.cell-select[data-fld]');
+  if (!sel) return;
+  const tr = sel.closest('[data-id]');
   if (!tr) return;
   const proj = S.projects.find(x => x.id === tr.dataset.id);
   if (proj) {
-    proj[ctl.dataset.fld] = ctl.value;
+    proj[sel.dataset.fld] = sel.value;
     proj.updatedAt = Date.now();
-    const t = fmtUpdated(proj.updatedAt);
     const updEl = document.getElementById('upd-' + proj.id);
-    if (updEl) updEl.textContent = t;
-    document.querySelectorAll(`[data-upd-id="${proj.id}"]`).forEach(el => el.textContent = t);
+    if (updEl) updEl.textContent = fmtUpdated(proj.updatedAt);
     saveData();
   }
 });
@@ -1191,8 +1016,8 @@ document.addEventListener('click', e => {
   // Delete: show confirm
   const del = e.target.closest('.del-btn[data-id]');
   if (del) {
-    const container = del.closest('td.del-td') || del.closest('.m-del-wrap');
-    container.innerHTML = `<div class="del-confirm">
+    const td = del.closest('td.del-td');
+    td.innerHTML = `<div class="del-confirm">
       <button class="del-confirm-yes" data-id="${del.dataset.id}" aria-label="Confirm delete">Delete</button>
       <button class="del-confirm-no"  data-id="${del.dataset.id}" aria-label="Cancel">Cancel</button>
     </div>`;
@@ -1276,7 +1101,6 @@ async function exportExcel() {
       'Project':            p.name,
       'Description':        p.desc,
       'Priority':           p.priority,
-      'Lead':               p.lead,
       'Stage':              p.stage,
       'Stage Description':  p.stageDesc,
       'Deadline':           p.nextDate,
@@ -1287,7 +1111,7 @@ async function exportExcel() {
       'Last Updated':       p.updatedAt ? new Date(p.updatedAt).toISOString() : '',
     }));
     const ws = XLSX.utils.json_to_sheet(rows);
-    ws['!cols'] = [22,32,10,16,18,28,12,30,18,28,32,20].map(w => ({ wch: w }));
+    ws['!cols'] = [22,32,10,18,28,12,30,18,28,32,20].map(w => ({ wch: w }));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Projects');
     const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
@@ -1360,7 +1184,6 @@ document.getElementById('import-excel-input').addEventListener('change', async f
       name:             r['Project']           || '',
       desc:             r['Description']       || r['Goal'] || '',
       priority:         r['Priority']          || 'Medium',
-      lead:             r['Lead']              || '',
       stage:            r['Stage']             || r['Current Stage'] || '',
       stageDesc:        r['Stage Description'] || '',
       nextDate:         r['Deadline']          || r['As of Date'] || today(),
