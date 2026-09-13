@@ -588,7 +588,7 @@ tr.row-hover .del-btn { opacity: 1; }
     <span class="count-badge" id="cnt">0 projects</span>
     <span class="sync-chip sync-cloud" id="sync-chip" aria-live="polite">
       <span class="sync-dot" aria-hidden="true"></span>
-      <span id="sync-label">✓ Auto-saved</span>
+      <span id="sync-label">✓ Exported</span>
     </span>
   </div>
   <div class="topbar-r">
@@ -856,7 +856,7 @@ function updateSaveChip() {
     if (!bannerDismissed) banner.hidden = false;
   } else {
     chip.className = 'sync-chip sync-cloud';
-    label.textContent = '✓ Auto-saved';
+    label.textContent = '✓ Exported';
     banner.hidden = true;
     bannerDismissed = false; // reset so banner reappears on next change
   }
