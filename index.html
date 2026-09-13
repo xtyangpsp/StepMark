@@ -464,6 +464,7 @@ tr.row-hover .del-btn { opacity: 1; }
   text-transform: uppercase; letter-spacing: .07em;
 }
 .m-section { display: flex; flex-direction: column; gap: 3px; }
+.m-section-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .m-card-footer {
   display: flex; justify-content: flex-end; align-items: center;
   padding-top: 4px; border-top: 1px solid var(--border-sub);
@@ -1025,21 +1026,20 @@ function cardHTML(p) {
         </select>
         ${editCell('stageDesc', 'Stage details…', p.stageDesc, id)}
       </div>
-      <div class="m-field">
-        <span class="m-label">Deadline</span>
-        <input type="date" class="date-input" data-fld="nextDate" data-pid="${id}" value="${esc(p.nextDate)}" aria-label="Deadline date">
-      </div>
-      <div class="m-field">
-        <span class="m-label">Blockers</span>
-        <select class="cell-select" data-fld="blockersCategory" data-pid="${id}" aria-label="Blockers category">
-          ${blockerOpts(p.blockersCategory)}
-        </select>
-        ${editCell('blockersDetail', 'Describe the blocker…', p.blockersDetail, id)}
-      </div>
     </div>
     <div class="m-section">
-      <span class="m-label">Next Step</span>
+      <div class="m-section-header">
+        <span class="m-label">Next Step</span>
+        <input type="date" class="date-input" data-fld="nextDate" data-pid="${id}" value="${esc(p.nextDate)}" aria-label="Deadline date" style="width:auto">
+      </div>
       ${editCell('nextDesc', 'What needs to happen…', p.nextDesc, id)}
+    </div>
+    <div class="m-section">
+      <span class="m-label">Blockers</span>
+      <select class="cell-select" data-fld="blockersCategory" data-pid="${id}" aria-label="Blockers category">
+        ${blockerOpts(p.blockersCategory)}
+      </select>
+      ${editCell('blockersDetail', 'Describe the blocker…', p.blockersDetail, id)}
     </div>
     <div class="m-section">
       <span class="m-label">Notes</span>
