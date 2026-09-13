@@ -385,6 +385,8 @@ tr.row-hover .del-btn { opacity: 1; }
 .sum-i  { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--tx3); }
 .sum-dot { width: 7px; height: 7px; border-radius: 50%; }
 .footer-hint { margin-left: auto; font-size: 11px; color: var(--tx3); opacity: .7; }
+.footer-feedback { font-size: 11px; color: var(--accent); text-decoration: none; opacity: .8; transition: opacity .15s; }
+.footer-feedback:hover { opacity: 1; }
 .version-tag {
   font-size: 10px; font-weight: 600; color: var(--tx3);
   background: var(--surface-2); border: 1px solid var(--border);
@@ -704,6 +706,7 @@ tr.row-hover .del-btn { opacity: 1; }
     <div class="sum-i"><div class="sum-dot" style="background:var(--md)"></div><span id="s-md">0 Medium</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--lo)"></div><span id="s-lo">0 Low</span></div>
     <span class="footer-hint">Two rows per project: row 1 for key info · row 2 for details · Click priority badge to cycle</span>
+    <a href="https://github.com/xtyangpsp/Stride/issues" target="_blank" rel="noopener" class="footer-feedback">Feedback</a>
     <span class="version-tag">v1.1.0</span>
   </div>
 
@@ -765,6 +768,10 @@ tr.row-hover .del-btn { opacity: 1; }
           Use <em>Export</em> to download an Excel or JSON backup.
           Stride will prompt you if you close the tab with changes you haven't exported yet.
         </span>
+      </div>
+      <div class="modal-row" style="margin-top:4px;padding-top:12px;border-top:1px solid var(--border-sub)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Questions or bugs? <a href="https://github.com/xtyangpsp/Stride/issues" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600">Open an issue on GitHub</a></span>
       </div>
     </div>
   </div>
