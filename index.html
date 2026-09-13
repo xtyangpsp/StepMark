@@ -491,7 +491,10 @@ tr.row-hover .del-btn { opacity: 1; }
   /* Hide table; show cards */
   .table-card { display: none !important; }
   .cards-view { display: flex; }
-  /* Topbar: hide count + sync chip on very small */
+  /* Topbar: collapse Export/Import to icon-only */
+  .btn-label   { display: none; }
+  .btn-chevron { display: none; }
+  .btn-ghost   { padding: 7px 9px; }
   .count-badge { display: none; }
 }
 @media (max-width: 640px) {
@@ -587,8 +590,8 @@ tr.row-hover .del-btn { opacity: 1; }
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
           <path d="M6 1v8M3 6l3 3 3-3"/><line x1="1" y1="11" x2="11" y2="11"/>
         </svg>
-        Export
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
+        <span class="btn-label">Export</span>
+        <svg class="btn-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
       </button>
       <div class="menu-dropdown" id="exp-dropdown" role="menu">
         <button class="menu-item" id="exp-excel" role="menuitem"><span class="menu-item-icon">📊</span> Excel (.xlsx)</button>
@@ -600,8 +603,8 @@ tr.row-hover .del-btn { opacity: 1; }
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
           <path d="M6 9V1M3 4l3-3 3 3"/><line x1="1" y1="11" x2="11" y2="11"/>
         </svg>
-        Import
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
+        <span class="btn-label">Import</span>
+        <svg class="btn-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 3.5l3 3 3-3"/></svg>
       </button>
       <div class="menu-dropdown" id="imp-dropdown" role="menu">
         <button class="menu-item" id="imp-excel" role="menuitem"><span class="menu-item-icon">📊</span> Excel (.xlsx)</button>
