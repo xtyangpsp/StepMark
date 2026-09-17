@@ -4,6 +4,7 @@ v1.1.0:
 3. fixed a bug that the last updated value was not kept when importing.
 4. changed "auto-saved" to "Exported" after exporting to file.
 5. changed "priority" from cycled clicking to a dropdown list, colors are kept
+6. Renamed to StepMark
 
 v1.0.1:
 1. added calendar picker for the date field
