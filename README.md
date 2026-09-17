@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Purdue%20University-CSaT-CEB888?style=flat-square" alt="Purdue University · CSaT">
-  <img src="https://img.shields.io/badge/license-MIT-5C5FEB?style=flat-square" alt="MIT License">
+  <img src="https://img.shields.io/badge/license-AGPL--3.0-5C5FEB?style=flat-square" alt="AGPL-3.0 License">
   <img src="https://img.shields.io/badge/no%20install-open%20%26%20use-34D399?style=flat-square" alt="No install">
 </p>
 
@@ -83,4 +83,4 @@ Both formats can be re-imported into StepMark.
 
 ## License
 
-MIT — free to use, modify, and distribute.
+[AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html) — free to use, modify, and distribute. If you modify StepMark and run it as a network service (e.g. host a modified version for others to use), you must also make your modified source available under the same license.
