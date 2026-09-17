@@ -1,9 +1,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Stride</title>
+<title>StepMark</title>
 <link rel="icon" href="assets/mark.svg?v=2" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Stride">
+<meta name="apple-mobile-web-app-title" content="StepMark">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -288,6 +288,19 @@ tr.tr2 .cell-text { font-weight: 400; font-size: 12px; color: var(--tx2); }
 }
 .date-input:hover::-webkit-calendar-picker-indicator,
 .date-input:focus::-webkit-calendar-picker-indicator { opacity: .85; }
+
+/* Date wrapper + Done button (appears while the date field is focused) */
+.date-wrap { position: relative; display: inline-flex; align-items: center; gap: 4px; width: 100%; }
+.date-wrap .date-input { flex: 1; min-width: 0; }
+.date-done-btn {
+  display: none; align-items: center; justify-content: center;
+  flex-shrink: 0; height: 18px; padding: 0 7px; border: none; border-radius: 999px;
+  background: var(--accent); color: #fff; font-family: inherit;
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  cursor: pointer; transition: filter .1s;
+}
+.date-done-btn:hover { filter: brightness(1.1); }
+.date-wrap:focus-within .date-done-btn { display: inline-flex; }
 
 /* Notes span cell */
 td.notes-td { padding: 8px 14px; vertical-align: top; }
@@ -586,7 +599,7 @@ tr.row-hover .del-btn { opacity: 1; }
     <div class="mark" aria-hidden="true">
       <img src="assets/mark.svg?v=2" alt="">
     </div>
-    <span class="appname">Stride</span>
+    <span class="appname">StepMark</span>
     <span class="count-badge" id="cnt">0 projects</span>
     <span class="sync-chip sync-cloud" id="sync-chip" aria-live="polite">
       <span class="sync-dot" aria-hidden="true"></span>
@@ -620,7 +633,7 @@ tr.row-hover .del-btn { opacity: 1; }
         <button class="menu-item" id="imp-json"  role="menuitem"><span class="menu-item-icon">📄</span> JSON</button>
       </div>
     </div>
-    <button class="icon-btn" id="about-btn" title="About Stride" aria-label="About Stride">
+    <button class="icon-btn" id="about-btn" title="About StepMark" aria-label="About StepMark">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
       </svg>
@@ -708,7 +721,7 @@ tr.row-hover .del-btn { opacity: 1; }
     <div class="sum-i"><div class="sum-dot" style="background:var(--md)"></div><span id="s-md">0 Medium</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--lo)"></div><span id="s-lo">0 Low</span></div>
     <span class="footer-hint">Two rows per project: row 1 for key info · row 2 for details</span>
-    <a href="https://github.com/xtyangpsp/Stride/issues" target="_blank" rel="noopener" class="footer-feedback">Feedback</a>
+    <a href="https://github.com/xtyangpsp/StepMark/issues" target="_blank" rel="noopener" class="footer-feedback">Feedback</a>
     <span class="version-tag">v1.1.0</span>
   </div>
 
@@ -739,11 +752,11 @@ tr.row-hover .del-btn { opacity: 1; }
     <div class="modal-logo" aria-hidden="true">
       <img src="assets/mark.svg?v=2" alt="">
     </div>
-    <h2 id="about-title">Stride</h2>
+    <h2 id="about-title">StepMark</h2>
     <p class="modal-desc">
       A lightweight project progress tracker for research groups and graduate students.
       Each project gets two rows: key data on top, details below. Data saves automatically
-      to your browser. Export to Excel or JSON for an external backup — Stride will remind you
+      to your browser. Export to Excel or JSON for an external backup — StepMark will remind you
       if you try to close the tab with unexported changes.
     </p>
     <div class="modal-meta">
@@ -768,12 +781,12 @@ tr.row-hover .del-btn { opacity: 1; }
         <span style="font-size:12px;color:var(--tx2);line-height:1.6">
           Data saves automatically to <strong style="color:var(--tx)">this browser</strong>.
           Use <em>Export</em> to download an Excel or JSON backup.
-          Stride will prompt you if you close the tab with changes you haven't exported yet.
+          StepMark will prompt you if you close the tab with changes you haven't exported yet.
         </span>
       </div>
       <div class="modal-row" style="margin-top:4px;padding-top:12px;border-top:1px solid var(--border-sub)">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span>Questions or bugs? <a href="https://github.com/xtyangpsp/Stride/issues" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600">Open an issue on GitHub</a></span>
+        <span>Questions or bugs? <a href="https://github.com/xtyangpsp/StepMark/issues" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600">Open an issue on GitHub</a></span>
       </div>
     </div>
   </div>
@@ -983,7 +996,10 @@ function rowHTML(p) {
       ${stageOpts(p.stage)}
     </select>
   </td>
-  <td><input type="date" class="date-input" data-fld="nextDate" data-pid="${id}" value="${esc(p.nextDate)}" aria-label="Deadline date"></td>
+  <td><div class="date-wrap">
+    <input type="date" class="date-input" data-fld="nextDate" data-pid="${id}" value="${esc(p.nextDate)}" aria-label="Deadline date">
+    <button type="button" class="date-done-btn" tabindex="-1" aria-label="Done picking date">Done</button>
+  </div></td>
   <td class="sel-td">
     <select class="cell-select" data-fld="blockersCategory" data-pid="${id}" aria-label="Blockers category">
       ${blockerOpts(p.blockersCategory)}
@@ -1037,7 +1053,10 @@ function cardHTML(p) {
     <div class="m-section">
       <div class="m-section-header">
         <span class="m-label">Next Step</span>
-        <input type="date" class="date-input" data-fld="nextDate" data-pid="${id}" value="${esc(p.nextDate)}" aria-label="Deadline date" style="width:auto">
+        <div class="date-wrap" style="width:auto">
+          <input type="date" class="date-input" data-fld="nextDate" data-pid="${id}" value="${esc(p.nextDate)}" aria-label="Deadline date" style="width:auto">
+          <button type="button" class="date-done-btn" tabindex="-1" aria-label="Done picking date">Done</button>
+        </div>
       </div>
       ${editCell('nextDesc', 'What needs to happen…', p.nextDesc, id)}
     </div>
@@ -1227,6 +1246,15 @@ document.addEventListener('click', e => {
     if (S.sort === key) S.dir = S.dir === 'asc' ? 'desc' : 'asc'; else { S.sort = key; S.dir = 'asc'; }
     saveLocal(); render(); return;
   }
+  // Date picker "Done" button — blur the date field to close the picker
+  const doneBtn = e.target.closest('.date-done-btn');
+  if (doneBtn) {
+    const wrap = doneBtn.closest('.date-wrap');
+    const input = wrap && wrap.querySelector('.date-input');
+    if (input) input.blur();
+    doneBtn.blur();
+    return;
+  }
   // Add
   if (e.target.closest('#add-btn') || e.target.closest('#add-row-btn')) { addProject(); return; }
   // Export / Import menus
@@ -1275,7 +1303,7 @@ document.getElementById('banner-dismiss').addEventListener('click', () => {
 /* ── Export Excel ─────────────────────────────────────────── */
 async function exportExcel() {
   if (!S.projects.length) { showToast('No projects to export', 'err'); return; }
-  const baseName = await promptFilename('Stride_projects', '.xlsx');
+  const baseName = await promptFilename('StepMark_projects', '.xlsx');
   if (!baseName) return;
   try {
     const rows = S.projects.map(p => ({
@@ -1316,7 +1344,7 @@ async function exportExcel() {
 /* ── Export JSON ──────────────────────────────────────────── */
 async function exportJSON() {
   if (!S.projects.length) { showToast('No projects to export', 'err'); return; }
-  const baseName = await promptFilename('Stride_projects', '.json');
+  const baseName = await promptFilename('StepMark_projects', '.json');
   if (!baseName) return;
   const filename = baseName.replace(/\.json$/i, '') + '.json';
   const payload = JSON.stringify({ exported: new Date().toISOString(), version: 2, projects: S.projects }, null, 2);
