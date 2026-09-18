@@ -517,6 +517,7 @@ tr.row-hover .del-btn { opacity: 1; }
   .btn-label   { display: none; }
   .btn-chevron { display: none; }
   .btn-ghost   { padding: 7px 9px; }
+  #add-btn     { padding: 7px 9px; }
   .count-badge { display: none; }
 }
 @media (max-width: 640px) {
@@ -654,7 +655,7 @@ tr.row-hover .del-btn { opacity: 1; }
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
         <line x1="5.5" y1="1" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="10" y2="5.5"/>
       </svg>
-      Add project
+      <span class="btn-label">Add project</span>
     </button>
   </div>
 </header>
@@ -722,7 +723,7 @@ tr.row-hover .del-btn { opacity: 1; }
     <div class="sum-i"><div class="sum-dot" style="background:var(--lo)"></div><span id="s-lo">0 Low</span></div>
     <span class="footer-hint">Two rows per project: row 1 for key info · row 2 for details</span>
     <a href="https://github.com/xtyangpsp/StepMark/issues" target="_blank" rel="noopener" class="footer-feedback">Feedback</a>
-    <span class="version-tag">v1.1.0</span>
+    <span class="version-tag" id="version-tag"></span>
   </div>
 
   <!-- Export reminder banner — shown when there are changes since last export -->
@@ -774,7 +775,7 @@ tr.row-hover .del-btn { opacity: 1; }
       </div>
       <div class="modal-row">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
-        <span>Version&ensp;<strong>v1.1.0</strong></span>
+        <span>Version&ensp;<strong id="version-modal"></strong></span>
       </div>
       <div class="modal-row" style="margin-top:4px;padding-top:12px;border-top:1px solid var(--border-sub);flex-direction:column;align-items:flex-start;gap:6px">
         <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3)">Storage</span>
@@ -817,6 +818,7 @@ tr.row-hover .del-btn { opacity: 1; }
 /* ══════════════════════════════════════════════════════════
    CONSTANTS
 ══════════════════════════════════════════════════════════ */
+const APP_VERSION  = 'v1.1.1'; // single source of truth — update only here
 const STAGE_OPTS   = ['Planning', 'In Progress', 'Analyzing', 'Writing', 'Under Review', 'On Hold', 'Done'];
 const BLOCKER_OPTS = ['None', 'Awaiting Feedback', 'Missing Data', 'Resources', 'Technical', 'External', 'Other'];
 const PRI_CYCLE    = ['High', 'Medium', 'Low'];
@@ -1129,12 +1131,9 @@ function updateCounts() {
    EVENTS
 ══════════════════════════════════════════════════════════ */
 
-// Track editing focus
-document.addEventListener('focus', e => {
-  if (e.target.closest('.cell-text[contenteditable]')) isEditing = true;
-}, true);
-
-// Blur: save contenteditable field
+// Blur: save contenteditable field, and mirror the new value into the
+// other view's matching cell (table <-> cards) so both stay in sync
+// without needing a full re-render (which would drop focus mid-edit).
 document.addEventListener('blur', e => {
   const ct = e.target.closest('.cell-text[contenteditable][data-fld]');
   if (!ct) return;
@@ -1142,20 +1141,18 @@ document.addEventListener('blur', e => {
   if (!tr) return;
   const proj = S.projects.find(x => x.id === tr.dataset.id);
   if (proj) {
-    proj[ct.dataset.fld] = ct.innerText.trim();
+    const val = ct.innerText.trim();
+    proj[ct.dataset.fld] = val;
     proj.updatedAt = Date.now();
+    document.querySelectorAll(`.cell-text[data-fld="${ct.dataset.fld}"][data-pid="${proj.id}"]`).forEach(el => {
+      if (el !== ct) el.textContent = val;
+    });
     const t = fmtUpdated(proj.updatedAt);
     const updEl = document.getElementById('upd-' + proj.id);
     if (updEl) updEl.textContent = t;
     document.querySelectorAll(`[data-upd-id="${proj.id}"]`).forEach(el => el.textContent = t);
     saveData();
     updateCounts();
-  }
-  isEditing = false;
-  if (pendingServerProjects) {
-    S.projects = pendingServerProjects;
-    pendingServerProjects = null;
-    render();
   }
 }, true);
 
@@ -1166,7 +1163,8 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Select / date-input change: save immediately (table + card views)
+// Select / date-input change: save immediately, and mirror the new value
+// into the matching control in the other view (table <-> cards).
 document.addEventListener('change', e => {
   const ctl = e.target.closest('select.cell-select[data-fld]')
            || e.target.closest('select.pri-select[data-fld]')
@@ -1176,9 +1174,14 @@ document.addEventListener('change', e => {
   if (!container) return;
   const proj = S.projects.find(x => x.id === container.dataset.id);
   if (proj) {
-    proj[ctl.dataset.fld] = ctl.value;
+    const fld = ctl.dataset.fld;
+    const val = ctl.value;
+    proj[fld] = val;
     proj.updatedAt = Date.now();
-    if (ctl.dataset.fld === 'priority') {
+    document.querySelectorAll(`[data-fld="${fld}"][data-pid="${proj.id}"]`).forEach(el => {
+      if (el !== ctl) el.value = val;
+    });
+    if (fld === 'priority') {
       document.querySelectorAll(`.pri-select[data-pid="${proj.id}"]`).forEach(s => {
         s.className = 'pri-select ' + badgeCls(proj.priority);
       });
@@ -1416,16 +1419,16 @@ function addProject() {
   S.projects.push(p);
   render(); saveData();
   requestAnimationFrame(() => {
-    const tr = document.querySelector(`tr.tr1[data-id="${p.id}"]`);
-    if (tr) {
-      const cell = tr.querySelector('.cell-text[data-fld="name"]');
-      if (cell) {
-        cell.focus();
-        const range = document.createRange();
-        range.selectNodeContents(cell);
-        const sel = window.getSelection();
-        sel.removeAllRanges(); sel.addRange(range);
-      }
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const cell = isMobile
+      ? document.querySelector(`.m-card[data-id="${p.id}"] .cell-text[data-fld="name"]`)
+      : document.querySelector(`tr.tr1[data-id="${p.id}"] .cell-text[data-fld="name"]`);
+    if (cell) {
+      cell.focus();
+      const range = document.createRange();
+      range.selectNodeContents(cell);
+      const sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(range);
     }
   });
 }
@@ -1509,6 +1512,9 @@ window.addEventListener('beforeunload', e => {
 /* ══════════════════════════════════════════════════════════
    BOOT
 ══════════════════════════════════════════════════════════ */
+document.getElementById('version-tag').textContent = APP_VERSION;
+document.getElementById('version-modal').textContent = APP_VERSION;
+
 loadLocal();
 if (S.theme && S.theme !== 'system') {
   document.documentElement.setAttribute('data-theme', S.theme);

@@ -1,3 +1,8 @@
+v1.1.1:
+1. Fixed a bug that two views are not synced automatically without rebuild/filter etc.
+2. Add a version tag variable/constant so other places could pull the version from it.
+3. Reduce "Add project" in the top bar to only keep the "+" symbole in card view.
+
 v1.1.0:
 1. activates card mode when viewing on mobile phones. For larger display, it remains the same as older view (table like).
 2. added link to github issues page for feedback or bug report.
