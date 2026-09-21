@@ -31,6 +31,7 @@
   --hi: #DC2626; --hi-bg: #FEF2F2; --hi-br: #FECACA;
   --md: #D97706; --md-bg: #FFFBEB; --md-br: #FDE68A;
   --lo: #059669; --lo-bg: #ECFDF5; --lo-br: #A7F3D0;
+  --archived: #6B7280; --archived-bg: #F3F4F6; --archived-br: #D1D5DB;
   --sync-cloud:  #059669; --sync-cloud-bg: #ECFDF5;
   --sync-local:  #D97706; --sync-local-bg: #FFFBEB;
   --sync-saving: #9295AF; --sync-saving-bg: #F1F2FA;
@@ -48,6 +49,7 @@
     --hi: #F87171; --hi-bg: #2D1515; --hi-br: #7F1D1D;
     --md: #FBBF24; --md-bg: #2D2010; --md-br: #92400E;
     --lo: #34D399; --lo-bg: #0D2820; --lo-br: #065F46;
+    --archived: #9CA3AF; --archived-bg: #1F2233; --archived-br: #3A3E5C;
     --sync-cloud:  #34D399; --sync-cloud-bg: #0D2820;
     --sync-local:  #FBBF24; --sync-local-bg: #2D2010;
     --sync-saving: #575B79; --sync-saving-bg: #1C1F38;
@@ -65,6 +67,7 @@
   --hi: #F87171; --hi-bg: #2D1515; --hi-br: #7F1D1D;
   --md: #FBBF24; --md-bg: #2D2010; --md-br: #92400E;
   --lo: #34D399; --lo-bg: #0D2820; --lo-br: #065F46;
+  --archived: #9CA3AF; --archived-bg: #1F2233; --archived-br: #3A3E5C;
   --sync-cloud:  #34D399; --sync-cloud-bg: #0D2820;
   --sync-local:  #FBBF24; --sync-local-bg: #2D2010;
   --sync-saving: #575B79; --sync-saving-bg: #1C1F38;
@@ -176,7 +179,8 @@ body {
   padding: 9px 24px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
 .ctrl-lbl { font-size: 10px; font-weight: 700; color: var(--tx3); text-transform: uppercase; letter-spacing: .09em; }
-.pill-row { display: flex; gap: 4px; }
+.ctrl-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pill-row { display: flex; gap: 4px; flex-wrap: wrap; }
 .pill {
   font-family: inherit; font-size: 12px; font-weight: 500;
   padding: 3px 10px; border-radius: 999px; border: 1px solid var(--border);
@@ -188,6 +192,7 @@ body {
 .pill.on-hi  { background: var(--hi-bg);     border-color: var(--hi-br);   color: var(--hi); }
 .pill.on-md  { background: var(--md-bg);     border-color: var(--md-br);   color: var(--md); }
 .pill.on-lo  { background: var(--lo-bg);     border-color: var(--lo-br);   color: var(--lo); }
+.pill.on-archived { background: var(--archived-bg); border-color: var(--archived-br); color: var(--archived); }
 .vsep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
 
 /* ── Main ────────────────────────────────────────────────── */
@@ -339,6 +344,7 @@ td.pri-td { padding: 6px 10px; text-align: center; }
 .b-hi { background: var(--hi-bg); color: var(--hi); border-color: var(--hi-br); }
 .b-md { background: var(--md-bg); color: var(--md); border-color: var(--md-br); }
 .b-lo { background: var(--lo-bg); color: var(--lo); border-color: var(--lo-br); }
+.b-archived { background: var(--archived-bg); color: var(--archived); border-color: var(--archived-br); }
 
 /* ── Lead (span-cell) ───────────────────────────────────── */
 td.lead-td { padding: 6px 10px; text-align: center; vertical-align: middle; }
@@ -519,11 +525,15 @@ tr.row-hover .del-btn { opacity: 1; }
   .btn-ghost   { padding: 7px 9px; }
   #add-btn     { padding: 7px 9px; }
   .count-badge { display: none; }
+  /* Controls bar: stack Priority and Sort by on two rows */
+  .ctrl-bar  { flex-direction: column; align-items: stretch; gap: 6px; }
+  .ctrl-group { width: 100%; }
+  .vsep { display: none; }
 }
 @media (max-width: 640px) {
   .topbar, .ctrl-bar, .main { padding-inline: 16px; }
   .appname { font-size: 13px; }
-  .ctrl-bar { flex-wrap: nowrap; overflow-x: auto; }
+  .ctrl-group { flex-wrap: nowrap; overflow-x: auto; }
   .sync-chip { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -662,20 +672,25 @@ tr.row-hover .del-btn { opacity: 1; }
 
 <!-- ── Controls bar ──────────────────────────────────────── -->
 <div class="ctrl-bar" role="toolbar" aria-label="Filter and sort controls">
-  <span class="ctrl-lbl">Priority</span>
-  <div class="pill-row" id="f-pills" role="group" aria-label="Filter by priority">
-    <button class="pill on" data-f="all"    aria-pressed="true">All</button>
-    <button class="pill"    data-f="High"   aria-pressed="false">High</button>
-    <button class="pill"    data-f="Medium" aria-pressed="false">Medium</button>
-    <button class="pill"    data-f="Low"    aria-pressed="false">Low</button>
+  <div class="ctrl-group">
+    <span class="ctrl-lbl">Priority</span>
+    <div class="pill-row" id="f-pills" role="group" aria-label="Filter by priority">
+      <button class="pill on" data-f="all"      aria-pressed="true">All</button>
+      <button class="pill"    data-f="High"     aria-pressed="false">High</button>
+      <button class="pill"    data-f="Medium"   aria-pressed="false">Medium</button>
+      <button class="pill"    data-f="Low"      aria-pressed="false">Low</button>
+      <button class="pill"    data-f="Archived" aria-pressed="false">Archived</button>
+    </div>
   </div>
   <div class="vsep" aria-hidden="true"></div>
-  <span class="ctrl-lbl">Sort by</span>
-  <div class="pill-row" id="s-pills" role="group" aria-label="Sort by field">
-    <button class="pill" data-s="priority"  aria-pressed="false">Priority</button>
-    <button class="pill" data-s="nextDate"  aria-pressed="false">Deadline</button>
-    <button class="pill" data-s="updatedAt" aria-pressed="false">Updated</button>
-    <button class="pill" data-s="name"      aria-pressed="false">Name</button>
+  <div class="ctrl-group">
+    <span class="ctrl-lbl">Sort by</span>
+    <div class="pill-row" id="s-pills" role="group" aria-label="Sort by field">
+      <button class="pill" data-s="priority"  aria-pressed="false">Priority</button>
+      <button class="pill" data-s="nextDate"  aria-pressed="false">Deadline</button>
+      <button class="pill" data-s="updatedAt" aria-pressed="false">Updated</button>
+      <button class="pill" data-s="name"      aria-pressed="false">Name</button>
+    </div>
   </div>
 </div>
 
@@ -721,6 +736,7 @@ tr.row-hover .del-btn { opacity: 1; }
     <div class="sum-i"><div class="sum-dot" style="background:var(--hi)"></div><span id="s-hi">0 High</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--md)"></div><span id="s-md">0 Medium</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--lo)"></div><span id="s-lo">0 Low</span></div>
+    <div class="sum-i"><div class="sum-dot" style="background:var(--archived)"></div><span id="s-archived">0 Archived</span></div>
     <span class="footer-hint">Two rows per project: row 1 for key info · row 2 for details</span>
     <a href="https://github.com/xtyangpsp/StepMark/issues" target="_blank" rel="noopener" class="footer-feedback">Feedback</a>
     <span class="version-tag" id="version-tag"></span>
@@ -821,8 +837,8 @@ tr.row-hover .del-btn { opacity: 1; }
 const APP_VERSION  = 'v1.1.1'; // single source of truth — update only here
 const STAGE_OPTS   = ['Planning', 'In Progress', 'Analyzing', 'Writing', 'Under Review', 'On Hold', 'Done'];
 const BLOCKER_OPTS = ['None', 'Awaiting Feedback', 'Missing Data', 'Resources', 'Technical', 'External', 'Other'];
-const PRI_CYCLE    = ['High', 'Medium', 'Low'];
-const PRI_ORDER    = { High: 0, Medium: 1, Low: 2 };
+const PRI_CYCLE    = ['High', 'Medium', 'Low', 'Archived'];
+const PRI_ORDER    = { High: 0, Medium: 1, Low: 2, Archived: 3 };
 
 /* ══════════════════════════════════════════════════════════
    STATE
@@ -918,7 +934,7 @@ function migrateProject(p) {
   };
 }
 
-function badgeCls(p) { return p === 'High' ? 'b-hi' : p === 'Medium' ? 'b-md' : 'b-lo'; }
+function badgeCls(p) { return p === 'High' ? 'b-hi' : p === 'Medium' ? 'b-md' : p === 'Low' ? 'b-lo' : 'b-archived'; }
 function priOpts(cur) { return PRI_CYCLE.map(p => `<option value="${p}"${p===cur?' selected':''}>${p}</option>`).join(''); }
 
 function fmtUpdated(ts) {
@@ -1109,7 +1125,7 @@ function render() {
     const on = p.dataset.f === S.filter;
     p.setAttribute('aria-pressed', on);
     p.className = 'pill' + (on ? (
-      S.filter==='High' ? ' on-hi' : S.filter==='Medium' ? ' on-md' : S.filter==='Low' ? ' on-lo' : ' on'
+      S.filter==='High' ? ' on-hi' : S.filter==='Medium' ? ' on-md' : S.filter==='Low' ? ' on-lo' : S.filter==='Archived' ? ' on-archived' : ' on'
     ) : '');
   });
   document.querySelectorAll('#s-pills .pill').forEach(p => {
@@ -1125,6 +1141,7 @@ function updateCounts() {
   document.getElementById('s-hi').textContent = `${all.filter(p => p.priority === 'High').length} High`;
   document.getElementById('s-md').textContent = `${all.filter(p => p.priority === 'Medium').length} Medium`;
   document.getElementById('s-lo').textContent = `${all.filter(p => p.priority === 'Low').length} Low`;
+  document.getElementById('s-archived').textContent = `${all.filter(p => p.priority === 'Archived').length} Archived`;
 }
 
 /* ══════════════════════════════════════════════════════════
