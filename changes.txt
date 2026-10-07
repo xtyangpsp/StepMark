@@ -1,3 +1,14 @@
+v1.4.0:
+1. Added the option to manage and remove custom categories.
+
+v1.3.0:
+1. Added default categories and an option to add new custom categories
+
+v1.2.0:
+1. Added category column
+2. More display options, with the option to display by category
+3. Sort within category or across all.
+
 v1.1.1:
 1. Fixed a bug that two views are not synced automatically without rebuild/filter etc.
 2. Added a version tag variable/constant so other places could pull the version from it.
