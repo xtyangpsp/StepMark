@@ -1,6 +1,12 @@
 <p align="center">
-  <img src="assets/logo_name.svg" alt="StepMark" width="400" height="110"/>
+  <a href="https://xtyangpsp.github.io/StepMark/">
+    <img src="assets/logo_name.svg" alt="StepMark" width="400" height="110"/>
+  </a>
 </p>
+
+<h2 align="center">
+  🔗 <a href="https://xtyangpsp.github.io/StepMark/"><b>https://xtyangpsp.github.io/StepMark</b></a>
+</h2>
 
 <p align="center">
   A lightweight project progress tracker for research groups and graduate students,<br>
@@ -30,9 +36,13 @@
 
 ## Usage
 
-Open `index.html` in any modern browser. That's it — no install, no dependencies, no build step.
+<h3 align="center">
+  🚀 Access StepMark online: <a href="https://xtyangpsp.github.io/StepMark/"><b>https://xtyangpsp.github.io/StepMark</b></a>
+</h3>
 
-If you're using the hosted GitHub Pages version, just bookmark the URL. Your data lives in your browser's localStorage and is private to you.
+Just open the link above in any modern browser — no install, no dependencies, no build step. Bookmark the URL for quick access. Your data lives in your browser's localStorage and is private to you.
+
+Prefer to run it locally? Download `index.html` and open it directly in your browser.
 
 ### Keyboard shortcuts
 
