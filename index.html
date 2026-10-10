@@ -193,6 +193,16 @@ body {
 .pill.on-md  { background: var(--md-bg);     border-color: var(--md-br);   color: var(--md); }
 .pill.on-lo  { background: var(--lo-bg);     border-color: var(--lo-br);   color: var(--lo); }
 .pill.on-archived { background: var(--archived-bg); border-color: var(--archived-br); color: var(--archived); }
+.pill[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.pill[aria-disabled="true"]:hover { background: transparent; color: var(--tx2); }
+.ctrl-select {
+  font-family: inherit; font-size: 12px; font-weight: 500;
+  padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--tx2); cursor: pointer; max-width: 190px;
+}
+.ctrl-select:hover { background: var(--surface-2); color: var(--tx); }
+.ctrl-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.ctrl-select.on { background: var(--accent-l); border-color: var(--accent); color: var(--accent-tx); }
 .vsep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
 
 /* ── Main ────────────────────────────────────────────────── */
@@ -204,16 +214,17 @@ body {
   border-radius: 12px; overflow: hidden; overflow-x: auto;
 }
 table {
-  width: 100%; border-collapse: collapse; min-width: 1156px; table-layout: fixed;
+  width: 100%; border-collapse: collapse; min-width: 1304px; table-layout: fixed;
 }
 col.c-proj  { width: 162px; }
+col.c-cat   { width: 124px; }
 col.c-pri   { width: 90px; }
 col.c-lead  { width: 100px; }
 col.c-stage { width: 210px; }
 col.c-next  { width: 150px; }
-col.c-block { width: 130px; }
-col.c-notes { width: auto; min-width: 140px; }
-col.c-upd   { width: 90px; }
+col.c-block { width: 150px; }
+col.c-notes { width: auto; min-width: 200px; }
+col.c-upd   { width: 88px; }
 col.c-del   { width: 42px; }
 
 thead { background: var(--head-bg); }
@@ -280,7 +291,7 @@ tr.tr2 .cell-text { font-weight: 400; font-size: 12px; color: var(--tx2); }
   font-size: 11.5px; color: var(--tx3); font-weight: 500;
   font-variant-numeric: tabular-nums;
   border-radius: 4px; padding: 1px 3px;
-  cursor: pointer; width: 100%; min-width: 100px;
+  cursor: pointer; width: 100%; min-width: 110px;
   transition: background .1s, box-shadow .1s;
   color-scheme: inherit;
 }
@@ -346,13 +357,65 @@ td.pri-td { padding: 6px 10px; text-align: center; }
 .b-lo { background: var(--lo-bg); color: var(--lo); border-color: var(--lo-br); }
 .b-archived { background: var(--archived-bg); color: var(--archived); border-color: var(--archived-br); }
 
+/* ── Category (span-cell) ────────────────────────────────── */
+td.cat-td { padding: 6px 10px; text-align: center; vertical-align: middle; }
+.cat-select {
+  width: 100%; text-align: center; text-align-last: center;
+  font-weight: 500; font-size: 12px; color: var(--tx2);
+  border-radius: 4px; padding: 3px 2px;
+}
+.cat-select:hover { background: var(--accent-l); }
+.cat-select.is-empty { color: var(--tx3); }
+.m-card .cat-select { text-align: left; text-align-last: left; font-size: 13px; }
+
+/* ── Manage categories dialog ────────────────────────────── */
+.mgr-list { display: flex; flex-direction: column; gap: 2px; max-height: 280px; overflow-y: auto; margin-top: 4px; }
+.mgr-row {
+  display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px;
+  font-size: 13px; color: var(--tx); border: 1px solid transparent;
+}
+.mgr-row:hover { background: var(--surface-2); }
+.mgr-row.confirm { background: var(--hi-bg); border-color: var(--hi-br); flex-wrap: wrap; }
+.mgr-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.mgr-count { font-size: 11px; color: var(--tx3); white-space: nowrap; }
+.mgr-tag { font-size: 10px; font-weight: 700; color: var(--tx3); text-transform: uppercase; letter-spacing: .06em; }
+.mgr-note { flex-basis: 100%; font-size: 11.5px; color: var(--hi); }
+.mgr-rm {
+  font-family: inherit; font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 6px;
+  border: 1px solid var(--border); background: transparent; color: var(--tx2); cursor: pointer;
+}
+.mgr-rm:hover { background: var(--hi-bg); border-color: var(--hi-br); color: var(--hi); }
+.mgr-empty { font-size: 12.5px; color: var(--tx3); padding: 10px 8px; }
+
+/* ── Group header rows (Group by category) ───────────────── */
+tbody tr.grp-row td {
+  background: var(--surface-2); padding: 6px 14px;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.grp-toggle {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; border: none; cursor: pointer; font-family: inherit;
+  font-size: 11px; font-weight: 700; color: var(--tx2);
+  text-transform: uppercase; letter-spacing: .08em; padding: 2px 0;
+}
+.grp-toggle:hover { color: var(--accent-tx); }
+.grp-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.grp-chev { transition: transform .15s; flex-shrink: 0; }
+.grp-collapsed .grp-chev { transform: rotate(-90deg); }
+.grp-count {
+  font-size: 10.5px; font-weight: 600; color: var(--tx3); letter-spacing: 0; text-transform: none;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 0 8px;
+}
+.m-group { padding: 4px 2px 0; }
+.m-group .grp-toggle { width: 100%; }
+
 /* ── Lead (span-cell) ───────────────────────────────────── */
 td.lead-td { padding: 6px 10px; text-align: center; vertical-align: middle; }
 td.lead-td .cell-text { text-align: center; font-size: 12px; }
 
 /* ── Last Updated (span-cell) ────────────────────────────── */
 td.upd-td {
-  padding: 6px 8px; text-align: center;
+  padding: 6px 10px; text-align: center;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px; color: var(--tx3);
   font-variant-numeric: tabular-nums; white-space: nowrap;
@@ -684,12 +747,34 @@ tr.row-hover .del-btn { opacity: 1; }
   </div>
   <div class="vsep" aria-hidden="true"></div>
   <div class="ctrl-group">
+    <label class="ctrl-lbl" for="cat-filter">Category</label>
+    <select class="ctrl-select" id="cat-filter" aria-label="Filter by category"></select>
+    <button class="pill" id="cat-manage-btn" type="button" title="Add or remove custom categories">Manage</button>
+  </div>
+  <div class="vsep" aria-hidden="true"></div>
+  <div class="ctrl-group">
+    <span class="ctrl-lbl">Group</span>
+    <div class="pill-row" id="v-pills" role="group" aria-label="Display mode">
+      <button class="pill" data-v="flat"  aria-pressed="false">None</button>
+      <button class="pill" data-v="group" aria-pressed="false">By category</button>
+    </div>
+  </div>
+  <div class="vsep" aria-hidden="true"></div>
+  <div class="ctrl-group">
     <span class="ctrl-lbl">Sort by</span>
     <div class="pill-row" id="s-pills" role="group" aria-label="Sort by field">
       <button class="pill" data-s="priority"  aria-pressed="false">Priority</button>
+      <button class="pill" data-s="category"  aria-pressed="false">Category</button>
       <button class="pill" data-s="nextDate"  aria-pressed="false">Deadline</button>
       <button class="pill" data-s="updatedAt" aria-pressed="false">Updated</button>
       <button class="pill" data-s="name"      aria-pressed="false">Name</button>
+    </div>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-lbl">Sort scope</span>
+    <div class="pill-row" id="sc-pills" role="group" aria-label="Sort scope">
+      <button class="pill" data-sc="all"    aria-pressed="false" title="Sort all projects together">All</button>
+      <button class="pill" data-sc="within" aria-pressed="false" title="Sort inside each category">Within categories</button>
     </div>
   </div>
 </div>
@@ -699,13 +784,14 @@ tr.row-hover .del-btn { opacity: 1; }
   <div class="card table-card">
     <table aria-label="Project progress tracker">
       <colgroup>
-        <col class="c-proj"> <col class="c-pri"> <col class="c-lead"> <col class="c-stage">
+        <col class="c-proj"> <col class="c-cat"> <col class="c-pri"> <col class="c-lead"> <col class="c-stage">
         <col class="c-next"> <col class="c-block"> <col class="c-notes">
         <col class="c-upd">  <col class="c-del">
       </colgroup>
       <thead>
         <tr>
           <th class="sort-th" data-s="name">Project</th>
+          <th class="sort-th" data-s="category">Category</th>
           <th>Priority</th>
           <th>Lead</th>
           <th>Stage</th>
@@ -809,6 +895,44 @@ tr.row-hover .del-btn { opacity: 1; }
   </div>
 </div>
 
+<!-- Manage categories dialog -->
+<div class="modal-backdrop" id="catmgr-modal" role="dialog" aria-modal="true" aria-labelledby="catmgr-title">
+  <div class="modal" style="max-width:400px">
+    <button class="modal-close" id="catmgr-close" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <h2 id="catmgr-title" style="font-size:15px;margin-bottom:4px">Manage categories</h2>
+    <p style="font-size:11.5px;color:var(--tx3);margin-bottom:10px">Research, Teaching and Service are built in. Removing a custom category sets its projects to Uncategorized.</p>
+    <div class="mgr-list" id="catmgr-list"></div>
+    <div class="fname-actions">
+      <button class="btn-ghost" id="catmgr-done">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- New category dialog -->
+<div class="modal-backdrop" id="cat-modal" role="dialog" aria-modal="true" aria-labelledby="cat-title">
+  <div class="modal" style="max-width:360px">
+    <button class="modal-close" id="cat-close" aria-label="Cancel">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <h2 id="cat-title" style="font-size:15px;margin-bottom:14px">New category</h2>
+    <label class="fname-label" for="cat-name-input">Category name</label>
+    <div class="fname-row">
+      <input class="fname-input" id="cat-name-input" type="text" maxlength="40" spellcheck="false" autocomplete="off" placeholder="e.g. Outreach">
+    </div>
+    <p style="font-size:11.5px;color:var(--tx3);margin-top:8px">Saved with your data and available for all projects.</p>
+    <div class="fname-actions">
+      <button class="btn-ghost" id="cat-cancel">Cancel</button>
+      <button class="btn btn-primary" id="cat-ok">Add</button>
+    </div>
+  </div>
+</div>
+
 <!-- Filename dialog -->
 <div class="modal-backdrop" id="fname-modal" role="dialog" aria-modal="true" aria-labelledby="fname-title">
   <div class="modal" style="max-width:360px">
@@ -834,17 +958,27 @@ tr.row-hover .del-btn { opacity: 1; }
 /* ══════════════════════════════════════════════════════════
    CONSTANTS
 ══════════════════════════════════════════════════════════ */
-const APP_VERSION  = 'v1.1.1'; // single source of truth — update only here
+const APP_VERSION  = 'v1.4.1'; // single source of truth — update only here
 const STAGE_OPTS   = ['Planning', 'In Progress', 'Analyzing', 'Writing', 'Under Review', 'On Hold', 'Done'];
 const BLOCKER_OPTS = ['None', 'Awaiting Feedback', 'Missing Data', 'Resources', 'Technical', 'External', 'Other'];
 const PRI_CYCLE    = ['High', 'Medium', 'Low', 'Archived'];
 const PRI_ORDER    = { High: 0, Medium: 1, Low: 2, Archived: 3 };
+const DEFAULT_CATS = ['Research', 'Teaching', 'Service'];
+const NEW_CAT      = '__new__';  // sentinel <option> that opens the "add category" dialog
+const NO_CAT       = '__none__'; // filter / group key for projects without a category
 
 /* ══════════════════════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════════════════ */
 const LS_KEY = 'pt-v2'; // v2 — new schema
-let S = { projects: [], filter: 'all', sort: null, dir: 'asc', theme: 'system' };
+let S = {
+  projects: [], filter: 'all', sort: null, dir: 'asc', theme: 'system',
+  catFilter: 'all',   // 'all' | NO_CAT | category name
+  view: 'flat',       // 'flat' | 'group' (group headers by category)
+  scope: 'all',       // sort scope: 'all' | 'within' (inside each category)
+  customCats: [],     // user-added categories (persisted; offered for future projects)
+  collapsed: {}       // collapsed group keys (lower-cased category or NO_CAT)
+};
 
 let dlApi = null;
 let lastExportedAt = 0; // timestamp of last export; 0 = never
@@ -904,6 +1038,7 @@ function today() { return new Date().toISOString().slice(0, 10); }
 function mkProject() {
   return {
     id: mkId(), name: '', desc: '',
+    category: '',
     priority: 'Medium',
     lead: '',
     stage: 'Planning', stageDesc: '',
@@ -921,6 +1056,7 @@ function migrateProject(p) {
     id:               p.id               || mkId(),
     name:             p.name             || '',
     desc:             p.desc             || p.goal          || '',
+    category:         String(p.category  || '').trim(),
     priority:         PRI_CYCLE.includes(p.priority) ? p.priority : 'Medium',
     lead:             p.lead             || '',
     stage:            STAGE_OPTS.includes(oldStage) ? oldStage : 'Planning',
@@ -948,20 +1084,93 @@ function fmtUpdated(ts) {
   return d.toISOString().slice(0, 10);
 }
 
+/* ── Categories ───────────────────────────────────────────── */
+function catOf(p)   { return (p.category || '').trim(); }
+function catKey(p)  { return catOf(p).toLowerCase() || NO_CAT; }   // case-insensitive group key
+function cmpText(a, b) { return a.localeCompare(b, undefined, { sensitivity: 'base' }); }
+function cmpCat(a, b) {            // alphabetical; uncategorized last
+  const ca = catOf(a), cb = catOf(b);
+  if (!ca && !cb) return 0;
+  if (!ca) return 1;
+  if (!cb) return -1;
+  return cmpText(ca, cb);
+}
+// Distinct categories (first-seen spelling wins), alphabetical
+function allCategories() {
+  const seen = new Map();
+  S.projects.forEach(p => { const c = catOf(p); if (c && !seen.has(c.toLowerCase())) seen.set(c.toLowerCase(), c); });
+  return [...seen.values()].sort(cmpText);
+}
+// Reuse existing spelling if the same category was typed with different case
+function canonCat(val, excludeId) {
+  const v = (val || '').trim();
+  if (!v) return '';
+  const hit = S.projects.find(p => p.id !== excludeId && catOf(p).toLowerCase() === v.toLowerCase());
+  return hit ? catOf(hit) : v;
+}
+
+// Every category the user can pick: defaults first, then saved custom ones and any in use
+function knownCategories() {
+  const seen = new Map();
+  DEFAULT_CATS.forEach(c => seen.set(c.toLowerCase(), c));
+  const extra = [];
+  [...(S.customCats || []), ...allCategories()].forEach(c => {
+    const k = (c || '').trim().toLowerCase();
+    if (k && !seen.has(k) && !extra.some(e => e.toLowerCase() === k)) extra.push(c.trim());
+  });
+  extra.sort(cmpText);
+  return [...DEFAULT_CATS, ...extra];
+}
+function catSelectHTML(p) {
+  const cur = catOf(p).toLowerCase();
+  const opts = knownCategories().map(c => `<option value="${esc(c)}"${c.toLowerCase() === cur ? ' selected' : ''}>${esc(c)}</option>`).join('');
+  return `<select class="cell-select cat-select${cur ? '' : ' is-empty'}" data-fld="category" data-pid="${p.id}" aria-label="Category">
+      <option value=""${cur ? '' : ' selected'}>Uncategorized</option>${opts}<option value="${NEW_CAT}">+ New category…</option>
+    </select>`;
+}
+
+function cmpField(a, b, key) {
+  if (key === 'priority')  return PRI_ORDER[a.priority] - PRI_ORDER[b.priority];
+  if (key === 'category')  return cmpCat(a, b);
+  if (key === 'nextDate')  return (a.nextDate||'').localeCompare(b.nextDate||'');
+  if (key === 'updatedAt') return (a.updatedAt||0) - (b.updatedAt||0);
+  if (key === 'name')      return (a.name||'').toLowerCase().localeCompare((b.name||'').toLowerCase());
+  return 0;
+}
+
+// Filter + sort. "Within categories" (or grouped display) keeps each category
+// together and applies the chosen sort inside it; otherwise the sort is global.
 function getRows() {
+  // Drop a stale category filter (e.g. the category was renamed or removed)
+  if (S.catFilter !== 'all' && S.catFilter !== NO_CAT &&
+      !allCategories().some(c => c.toLowerCase() === S.catFilter.toLowerCase())) S.catFilter = 'all';
+
   let rows = [...S.projects];
   if (S.filter !== 'all') rows = rows.filter(r => r.priority === S.filter);
-  if (S.sort) {
-    rows.sort((a, b) => {
-      let v = 0;
-      if (S.sort === 'priority')  v = PRI_ORDER[a.priority] - PRI_ORDER[b.priority];
-      else if (S.sort === 'nextDate')  v = (a.nextDate||'').localeCompare(b.nextDate||'');
-      else if (S.sort === 'updatedAt') v = (a.updatedAt||0) - (b.updatedAt||0);
-      else if (S.sort === 'name')      v = (a.name||'').toLowerCase().localeCompare((b.name||'').toLowerCase());
-      return S.dir === 'asc' ? v : -v;
-    });
-  }
+  if (S.catFilter !== 'all') rows = rows.filter(r => catKey(r) === S.catFilter.toLowerCase());
+
+  const within = S.view === 'group' || S.scope === 'within';
+  const mul = S.dir === 'asc' ? 1 : -1;
+  rows.sort((a, b) => {
+    if (within && S.sort !== 'category') {
+      const c = cmpCat(a, b);
+      if (c) return c;
+    }
+    return S.sort ? mul * cmpField(a, b, S.sort) : 0;   // Array.sort is stable
+  });
   return rows;
+}
+
+// Split already-sorted rows into contiguous category groups
+function groupRows(rows) {
+  const groups = [], idx = new Map();
+  const canon = new Map(allCategories().map(c => [c.toLowerCase(), c]));   // consistent spelling
+  rows.forEach(r => {
+    const k = catKey(r);
+    if (!idx.has(k)) { idx.set(k, groups.length); groups.push({ key: k, label: canon.get(k) || 'Uncategorized', rows: [] }); }
+    groups[idx.get(k)].rows.push(r);
+  });
+  return groups;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -991,16 +1200,38 @@ function blockerOpts(cur) {
   return BLOCKER_OPTS.map(o => `<option value="${esc(o)}"${o===cur?' selected':''}>${esc(o)}</option>`).join('');
 }
 
+const CHEV_ICON = `<svg class="grp-chev" width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5l3.5 3.5 3.5-3.5"/></svg>`;
 const DEL_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
   <polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14a2,2,0,0,1-2,2H8a2,2,0,0,1-2,-2L5,6"/>
   <path d="M10,11v6M14,11v6"/><path d="M9,6V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1V6"/>
 </svg>`;
+
+function groupHeaderInner(g) {
+  const collapsed = !!S.collapsed[g.key];
+  return `<button type="button" class="grp-toggle" data-gk="${esc(g.key)}" aria-expanded="${!collapsed}" aria-label="${collapsed ? 'Expand' : 'Collapse'} ${esc(g.label)}">
+    ${CHEV_ICON}<span>${esc(g.label)}</span><span class="grp-count">${g.rows.length}</span>
+  </button>`;
+}
+function groupHeaderRow(g) {
+  return `<tr class="grp-row${S.collapsed[g.key] ? ' grp-collapsed' : ''}"><td colspan="10">${groupHeaderInner(g)}</td></tr>`;
+}
+function groupHeaderCard(g) {
+  return `<div class="m-group${S.collapsed[g.key] ? ' grp-collapsed' : ''}">${groupHeaderInner(g)}</div>`;
+}
+// Build table / card markup for the current rows, with group headers when grouped
+function buildList(rows, rowFn, headFn) {
+  if (S.view !== 'group') return rows.map(rowFn).join('');
+  return groupRows(rows).map(g => headFn(g) + (S.collapsed[g.key] ? '' : g.rows.map(rowFn).join(''))).join('');
+}
 
 function rowHTML(p) {
   const id = p.id;
   return `
 <tr class="tr1" data-id="${id}">
   <td>${editCell('name', 'Project name', p.name, id)}</td>
+  <td class="span-cell cat-td" rowspan="2">
+    ${catSelectHTML(p)}
+  </td>
   <td class="span-cell pri-td" rowspan="2">
     <select class="pri-select ${badgeCls(p.priority)}" data-fld="priority" data-pid="${id}" aria-label="Priority">
       ${priOpts(p.priority)}
@@ -1057,10 +1288,14 @@ function cardHTML(p) {
     ${editCell('desc', 'Short description…', p.desc, id, 'm-desc')}
     <div class="m-grid">
       <div class="m-field">
+        <span class="m-label">Category</span>
+        ${catSelectHTML(p)}
+      </div>
+      <div class="m-field">
         <span class="m-label">Lead</span>
         ${editCell('lead', 'Unassigned', p.lead, id)}
       </div>
-      <div class="m-field">
+      <div class="m-field" style="grid-column:1 / -1">
         <span class="m-label">Stage</span>
         <select class="cell-select sel-stage" data-fld="stage" data-pid="${id}" aria-label="Stage">
           ${stageOpts(p.stage)}
@@ -1099,7 +1334,7 @@ function cardHTML(p) {
 function renderCards() {
   const rows = getRows();
   const cv = document.getElementById('cards-view');
-  cv.innerHTML = rows.map(cardHTML).join('') +
+  cv.innerHTML = buildList(rows, cardHTML, groupHeaderCard) +
     `<button class="m-add-btn" id="m-add-btn" aria-label="Add a new project">
       <svg width="12" height="12" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
         <line x1="5.5" y1="1" x2="5.5" y2="10"/><line x1="1" y1="5.5" x2="10" y2="5.5"/>
@@ -1112,8 +1347,9 @@ function renderCards() {
 function render() {
   const rows  = getRows();
   const tbody = document.getElementById('tbody');
-  tbody.innerHTML = rows.map(rowHTML).join('');
+  tbody.innerHTML = buildList(rows, rowHTML, groupHeaderRow);
   document.getElementById('empty-state').style.display = rows.length ? 'none' : 'block';
+  refreshCategoryUI();
   renderCards();
   updateCounts();
 
@@ -1133,6 +1369,37 @@ function render() {
     p.setAttribute('aria-pressed', on);
     p.classList.toggle('on', on);
   });
+  document.querySelectorAll('#v-pills .pill').forEach(p => {
+    const on = p.dataset.v === S.view;
+    p.setAttribute('aria-pressed', on);
+    p.classList.toggle('on', on);
+  });
+  // Grouped display always sorts inside each category, so the scope toggle is locked to "within"
+  const grouped = S.view === 'group';
+  document.querySelectorAll('#sc-pills .pill').forEach(p => {
+    const on = grouped ? p.dataset.sc === 'within' : p.dataset.sc === S.scope;
+    p.setAttribute('aria-pressed', on);
+    p.setAttribute('aria-disabled', grouped);
+    p.classList.toggle('on', on);
+  });
+}
+
+// Rebuild the category filter dropdown + autocomplete list from current data
+function refreshCategoryUI() {
+  const cats = allCategories();
+  const hasNone = S.projects.some(p => !catOf(p));
+  const count = key => S.projects.filter(p => catKey(p) === key).length;
+  const sel = document.getElementById('cat-filter');
+  sel.innerHTML =
+    `<option value="all">All (${S.projects.length})</option>` +
+    cats.map(c => `<option value="${esc(c)}">${esc(c)} (${count(c.toLowerCase())})</option>`).join('') +
+    (hasNone && cats.length ? `<option value="${NO_CAT}">Uncategorized (${count(NO_CAT)})</option>` : '');
+  const want = S.catFilter === 'all' || S.catFilter === NO_CAT
+    ? S.catFilter
+    : (cats.find(c => c.toLowerCase() === S.catFilter.toLowerCase()) || 'all');
+  sel.value = want;
+  if (sel.value !== want) sel.value = 'all';
+  sel.classList.toggle('on', sel.value !== 'all');
 }
 
 function updateCounts() {
@@ -1192,7 +1459,16 @@ document.addEventListener('change', e => {
   const proj = S.projects.find(x => x.id === container.dataset.id);
   if (proj) {
     const fld = ctl.dataset.fld;
-    const val = ctl.value;
+    let val = ctl.value;
+    if (fld === 'category' && val === NEW_CAT) {   // "+ New category…" → ask for a name
+      ctl.value = catOf(proj);
+      openCatModal(proj.id);
+      return;
+    }
+    if (fld === 'category') {
+      val = canonCat(val, proj.id);
+      document.querySelectorAll(`.cat-select[data-pid="${proj.id}"]`).forEach(el => el.classList.toggle('is-empty', !val));
+    }
     proj[fld] = val;
     proj.updatedAt = Date.now();
     document.querySelectorAll(`[data-fld="${fld}"][data-pid="${proj.id}"]`).forEach(el => {
@@ -1209,7 +1485,17 @@ document.addEventListener('change', e => {
     if (updEl) updEl.textContent = t;
     document.querySelectorAll(`[data-upd-id="${proj.id}"]`).forEach(el => el.textContent = t);
     saveData();
+    if (fld === 'category') {
+      // The row may now belong to a different group / be filtered out, so re-render when that matters
+      if (S.view === 'group' || S.scope === 'within' || S.sort === 'category' || S.catFilter !== 'all') render();
+      else refreshCategoryUI();
+    }
   }
+});
+
+// Category filter dropdown
+document.getElementById('cat-filter').addEventListener('change', e => {
+  S.catFilter = e.target.value; saveLocal(); render();
 });
 
 // Group hover: both tr1 and tr2 highlight together
@@ -1252,6 +1538,22 @@ document.addEventListener('click', e => {
   // Filter pills
   const fp = e.target.closest('#f-pills .pill');
   if (fp) { S.filter = fp.dataset.f; saveLocal(); render(); return; }
+  // Group (display mode) pills
+  const vp = e.target.closest('#v-pills .pill');
+  if (vp) { S.view = vp.dataset.v; saveLocal(); render(); return; }
+  // Sort-scope pills (locked while grouped)
+  const scp = e.target.closest('#sc-pills .pill');
+  if (scp) {
+    if (S.view !== 'group') { S.scope = scp.dataset.sc; saveLocal(); render(); }
+    return;
+  }
+  // Group header: collapse / expand
+  const gt = e.target.closest('.grp-toggle[data-gk]');
+  if (gt) {
+    const k = gt.dataset.gk;
+    if (S.collapsed[k]) delete S.collapsed[k]; else S.collapsed[k] = true;
+    saveLocal(); render(); return;
+  }
   // Sort pills
   const sp = e.target.closest('#s-pills .pill');
   if (sp) {
@@ -1329,6 +1631,7 @@ async function exportExcel() {
     const rows = S.projects.map(p => ({
       'Project':            p.name,
       'Description':        p.desc,
+      'Category':           p.category,
       'Priority':           p.priority,
       'Lead':               p.lead,
       'Stage':              p.stage,
@@ -1341,7 +1644,7 @@ async function exportExcel() {
       'Last Updated':       p.updatedAt ? new Date(p.updatedAt).toISOString() : '',
     }));
     const ws = XLSX.utils.json_to_sheet(rows);
-    ws['!cols'] = [22,32,10,16,18,28,12,30,18,28,32,20].map(w => ({ wch: w }));
+    ws['!cols'] = [22,32,16,10,16,18,28,12,30,18,28,32,20].map(w => ({ wch: w }));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Projects');
     const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
@@ -1367,7 +1670,7 @@ async function exportJSON() {
   const baseName = await promptFilename('StepMark_projects', '.json');
   if (!baseName) return;
   const filename = baseName.replace(/\.json$/i, '') + '.json';
-  const payload = JSON.stringify({ exported: new Date().toISOString(), version: 2, projects: S.projects }, null, 2);
+  const payload = JSON.stringify({ exported: new Date().toISOString(), version: 2, categories: S.customCats, projects: S.projects }, null, 2);
   try {
     if (dlApi) {
       await dlApi.save({ filename, data: payload });
@@ -1389,6 +1692,17 @@ function markExported() {
   updateSaveChip();
 }
 
+// Merge imported category names into the saved list (case-insensitive, skips defaults)
+function mergeCustomCats(list) {
+  list.forEach(c => {
+    const v = String(c || '').trim();
+    if (!v) return;
+    const k = v.toLowerCase();
+    if (DEFAULT_CATS.some(d => d.toLowerCase() === k) || S.customCats.some(x => x.toLowerCase() === k)) return;
+    S.customCats.push(v);
+  });
+}
+
 /* ── Import JSON ──────────────────────────────────────────── */
 document.getElementById('import-input').addEventListener('change', async function(e) {
   const file = e.target.files[0]; if (!file) return;
@@ -1397,6 +1711,7 @@ document.getElementById('import-input').addEventListener('change', async functio
     const list = Array.isArray(raw) ? raw : (raw.projects || []);
     if (!Array.isArray(list)) throw new Error('No projects array found');
     S.projects = list.map(migrateProject);
+    if (Array.isArray(raw.categories)) mergeCustomCats(raw.categories);
     await saveData(); render();
     showToast(`Imported ${S.projects.length} project${S.projects.length !== 1 ? 's' : ''}`);
   } catch(err) { showToast('Invalid JSON: ' + err.message, 'err'); }
@@ -1413,6 +1728,7 @@ document.getElementById('import-excel-input').addEventListener('change', async f
     S.projects = rows.map(r => migrateProject({
       name:             r['Project']           || '',
       desc:             r['Description']       || r['Goal'] || '',
+      category:         r['Category']          || '',
       priority:         r['Priority']          || 'Medium',
       lead:             r['Lead']              || '',
       stage:            r['Stage']             || r['Current Stage'] || '',
@@ -1433,6 +1749,8 @@ document.getElementById('import-excel-input').addEventListener('change', async f
 /* ── Add project ──────────────────────────────────────────── */
 function addProject() {
   const p = mkProject();
+  // Keep the new row visible when a specific category is being filtered
+  if (S.catFilter !== 'all' && S.catFilter !== NO_CAT) p.category = S.catFilter;
   S.projects.push(p);
   render(); saveData();
   requestAnimationFrame(() => {
@@ -1459,6 +1777,96 @@ document.getElementById('theme-btn').addEventListener('click', () => {
   S.theme = next; saveLocal();
   document.getElementById('sun-icon').hidden  = (next === 'dark');
   document.getElementById('moon-icon').hidden = (next !== 'dark');
+});
+
+/* ── Manage categories dialog ────────────────────────────── */
+let _mgrConfirm = null;   // lower-cased key awaiting "are you sure?"
+function renderCatMgr() {
+  const defaults = DEFAULT_CATS.map(c => c.toLowerCase());
+  const custom = knownCategories().filter(c => !defaults.includes(c.toLowerCase()));
+  const list = document.getElementById('catmgr-list');
+  if (!custom.length) {
+    list.innerHTML = '<div class="mgr-empty">No custom categories yet. Use “+ New category…” in any project’s Category dropdown to add one.</div>';
+    return;
+  }
+  list.innerHTML = custom.map(c => {
+    const k = c.toLowerCase();
+    const n = S.projects.filter(p => catKey(p) === k).length;
+    const cnt = `${n} project${n !== 1 ? 's' : ''}`;
+    if (_mgrConfirm === k) {
+      return `<div class="mgr-row confirm">
+        <span class="mgr-name">${esc(c)}</span>
+        <button type="button" class="mgr-rm" data-rm="${esc(k)}" data-ok="1">Remove</button>
+        <button type="button" class="mgr-rm" data-rm-cancel="1">Cancel</button>
+        <span class="mgr-note">${n} project${n !== 1 ? 's' : ''} will become Uncategorized.</span>
+      </div>`;
+    }
+    return `<div class="mgr-row">
+      <span class="mgr-name">${esc(c)}</span>
+      <span class="mgr-count">${n ? cnt : 'unused'}</span>
+      <button type="button" class="mgr-rm" data-rm="${esc(k)}" aria-label="Remove category ${esc(c)}">Remove</button>
+    </div>`;
+  }).join('');
+}
+function openCatMgr()  { _mgrConfirm = null; renderCatMgr(); document.getElementById('catmgr-modal').classList.add('open'); }
+function closeCatMgr() { document.getElementById('catmgr-modal').classList.remove('open'); _mgrConfirm = null; }
+function removeCategory(key) {
+  S.customCats = S.customCats.filter(c => c.toLowerCase() !== key);
+  const now = Date.now();
+  S.projects.forEach(p => { if (catKey(p) === key) { p.category = ''; p.updatedAt = now; } });
+  if (S.catFilter !== 'all' && S.catFilter.toLowerCase() === key) S.catFilter = 'all';
+  delete S.collapsed[key];
+  _mgrConfirm = null;
+  saveData(); render(); renderCatMgr();
+  showToast('Category removed');
+}
+document.getElementById('cat-manage-btn').addEventListener('click', openCatMgr);
+document.getElementById('catmgr-close').addEventListener('click', closeCatMgr);
+document.getElementById('catmgr-done').addEventListener('click', closeCatMgr);
+document.getElementById('catmgr-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) { closeCatMgr(); return; }
+  const rm = e.target.closest('[data-rm]');
+  if (rm) {
+    const k = rm.dataset.rm;
+    const n = S.projects.filter(p => catKey(p) === k).length;
+    if (rm.dataset.ok || n === 0) removeCategory(k);   // unused → remove right away
+    else { _mgrConfirm = k; renderCatMgr(); }
+    return;
+  }
+  if (e.target.closest('[data-rm-cancel]')) { _mgrConfirm = null; renderCatMgr(); }
+});
+
+/* ── New category dialog ─────────────────────────────────── */
+let _catPid = null;
+function openCatModal(pid) {
+  _catPid = pid;
+  const inp = document.getElementById('cat-name-input');
+  inp.value = '';
+  document.getElementById('cat-modal').classList.add('open');
+  requestAnimationFrame(() => inp.focus());
+}
+function closeCatModal() {
+  document.getElementById('cat-modal').classList.remove('open');
+  _catPid = null;
+}
+function confirmCatModal() {
+  const name = document.getElementById('cat-name-input').value.trim().replace(/\s+/g, ' ');
+  const proj = S.projects.find(x => x.id === _catPid);
+  if (!name) { closeCatModal(); return; }
+  const known = knownCategories().find(c => c.toLowerCase() === name.toLowerCase());
+  const finalName = known || name;
+  if (!known) S.customCats.push(finalName);      // persisted with the rest of the user data
+  if (proj) { proj.category = finalName; proj.updatedAt = Date.now(); }
+  closeCatModal();
+  saveData(); render();
+  showToast(known ? `Category "${finalName}" already exists — selected it` : `Added category "${finalName}"`);
+}
+document.getElementById('cat-ok').addEventListener('click', confirmCatModal);
+document.getElementById('cat-cancel').addEventListener('click', closeCatModal);
+document.getElementById('cat-close').addEventListener('click', closeCatModal);
+document.getElementById('cat-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeCatModal(); });
+document.getElementById('cat-name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); confirmCatModal(); }
 });
 
 /* ── Filename dialog ─────────────────────────────────────── */
@@ -1492,7 +1900,7 @@ document.getElementById('about-btn').addEventListener('click', openAbout);
 document.getElementById('about-close').addEventListener('click', closeAbout);
 document.getElementById('about-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeAbout(); });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeAbout(); closeFnameModal(null); }
+  if (e.key === 'Escape') { closeAbout(); closeFnameModal(null); closeCatModal(); closeCatMgr(); }
 });
 
 /* ── Toast ────────────────────────────────────────────────── */
