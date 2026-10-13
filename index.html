@@ -145,6 +145,7 @@ body {
   cursor: pointer; color: var(--tx3); transition: background .12s, color .12s;
 }
 .icon-btn:hover { background: var(--surface-2); color: var(--tx); }
+a.icon-btn { text-decoration: none; }
 .icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ── Export / Import dropdown ────────────────────────────── */
@@ -735,6 +736,11 @@ tr.row-hover .del-btn { opacity: 1; }
         <button class="menu-item" id="imp-json"  role="menuitem"><span class="menu-item-icon">📄</span> JSON</button>
       </div>
     </div>
+    <a class="icon-btn" id="manual-btn" href="manual.html" target="_blank" rel="noopener" title="User manual" aria-label="Open the user manual">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+    </a>
     <button class="icon-btn" id="about-btn" title="About StepMark" aria-label="About StepMark">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
@@ -854,6 +860,7 @@ tr.row-hover .del-btn { opacity: 1; }
     <div class="sum-i"><div class="sum-dot" style="background:var(--lo)"></div><span id="s-lo">0 Low</span></div>
     <div class="sum-i"><div class="sum-dot" style="background:var(--archived)"></div><span id="s-archived">0 Archived</span></div>
     <span class="footer-hint">Two rows per project: row 1 for key info · row 2 for details</span>
+    <a href="manual.html" target="_blank" rel="noopener" class="footer-feedback">User manual</a>
     <a href="https://github.com/xtyangpsp/StepMark/issues" target="_blank" rel="noopener" class="footer-feedback">Feedback</a>
     <span class="version-tag" id="version-tag"></span>
   </div>
@@ -904,6 +911,10 @@ tr.row-hover .del-btn { opacity: 1; }
       <div class="modal-row">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
         <span>Purdue University · CSaT</span>
+      </div>
+      <div class="modal-row">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>New here?&ensp;<a href="manual.html" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-weight:600">Read the user manual</a></span>
       </div>
       <div class="modal-row">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
@@ -988,7 +999,7 @@ tr.row-hover .del-btn { opacity: 1; }
 /* ══════════════════════════════════════════════════════════
    CONSTANTS
 ══════════════════════════════════════════════════════════ */
-const APP_VERSION  = 'v1.5.0'; // single source of truth — update only here
+const APP_VERSION  = 'v1.6.0'; // single source of truth — update only here
 const STAGE_OPTS   = ['Planning', 'In Progress', 'Analyzing', 'Writing', 'Under Review', 'On Hold', 'Done'];
 const BLOCKER_OPTS = ['None', 'Awaiting Feedback', 'Missing Data', 'Resources', 'Technical', 'External', 'Other'];
 const PRI_CYCLE    = ['High', 'Medium', 'Low', 'Archived'];
