@@ -867,7 +867,7 @@ tr.row-hover .del-btn { opacity: 1; }
 
   <!-- Export reminder banner — shown when there are changes since last export -->
   <div class="export-banner" id="export-banner" hidden role="alert">
-    <span class="export-banner-text">
+    <span class="export-banner-text" id="banner-text">
       <strong>Unsaved changes.</strong> Export to keep a backup — browser storage can be cleared.
     </span>
     <div class="export-banner-btns">
@@ -999,7 +999,7 @@ tr.row-hover .del-btn { opacity: 1; }
 /* ══════════════════════════════════════════════════════════
    CONSTANTS
 ══════════════════════════════════════════════════════════ */
-const APP_VERSION  = 'v1.6.0'; // single source of truth — update only here
+const APP_VERSION  = 'v1.6.1'; // single source of truth — update only here
 const STAGE_OPTS   = ['Planning', 'In Progress', 'Analyzing', 'Writing', 'Under Review', 'On Hold', 'Done'];
 const BLOCKER_OPTS = ['None', 'Awaiting Feedback', 'Missing Data', 'Resources', 'Technical', 'External', 'Other'];
 const PRI_CYCLE    = ['High', 'Medium', 'Low', 'Archived'];
@@ -1052,20 +1052,44 @@ function saveLocal() {
 ══════════════════════════════════════════════════════════ */
 let bannerDismissed = false;
 
+// "3 days ago", "5 minutes ago", or "on 2026-10-01" for anything older than two weeks
+function fmtAgo(ts) {
+  const diff = Date.now() - +ts;
+  const n = (v, u) => `${v} ${u}${v === 1 ? '' : 's'} ago`;
+  if (diff < 60000)          return 'just now';
+  if (diff < 3600000)        return n(Math.floor(diff / 60000), 'minute');
+  if (diff < 86400000)       return n(Math.floor(diff / 3600000), 'hour');
+  if (diff < 14 * 86400000)  return n(Math.floor(diff / 86400000), 'day');
+  return 'on ' + new Date(+ts).toISOString().slice(0, 10);
+}
+
 function updateSaveChip() {
   const chip  = document.getElementById('sync-chip');
   const label = document.getElementById('sync-label');
   const banner = document.getElementById('export-banner');
+  const bannerText = document.getElementById('banner-text');
   const latestChange = S.projects.length ? Math.max(S.orderAt || 0, ...S.projects.map(p => p.updatedAt || 0)) : 0;
   const hasUnsaved = S.projects.length > 0 && latestChange > lastExportedAt;
+  const ago = lastExportedAt ? fmtAgo(lastExportedAt) : '';
 
   if (hasUnsaved) {
+    const changed = S.projects.filter(p => (p.updatedAt || 0) > lastExportedAt).length;
+    const what = changed
+      ? `${changed} of ${S.projects.length} project${S.projects.length !== 1 ? 's' : ''} changed`
+      : 'The project order changed';
     chip.className = 'sync-chip sync-local';
-    label.textContent = '📤 Export to back up';
+    label.textContent = lastExportedAt ? `📤 Last export ${ago}` : '📤 Not exported yet';
+    chip.title = lastExportedAt
+      ? `${what} since your last export (${ago}). Export to back up.`
+      : 'You have not exported this data yet. Export to back up.';
+    bannerText.innerHTML = lastExportedAt
+      ? `<strong>Unsaved changes.</strong> ${what} since your last export (${ago}). Export to keep a backup — browser storage can be cleared.`
+      : `<strong>Not backed up yet.</strong> You haven't exported this data. Export to keep a backup — browser storage can be cleared.`;
     if (!bannerDismissed) banner.hidden = false;
   } else {
     chip.className = 'sync-chip sync-cloud';
     label.textContent = '✓ Exported';
+    chip.title = ago ? `Last exported ${ago}` : '';
     banner.hidden = true;
     bannerDismissed = false; // reset so banner reappears on next change
   }
@@ -1221,6 +1245,21 @@ function groupRows(rows) {
 function saveData() {
   saveLocal();
   updateSaveChip();
+  ensurePersistentStorage();
+}
+
+// Ask the browser not to evict our storage under disk pressure. Done once per
+// visit, and only once there is data worth protecting (so first-time visitors
+// are not prompted — Firefox shows a permission prompt for this).
+let persistAsked = false;
+async function ensurePersistentStorage() {
+  if (persistAsked || !S.projects.length) return;
+  persistAsked = true;
+  try {
+    if (navigator.storage && navigator.storage.persist && !(await navigator.storage.persisted())) {
+      await navigator.storage.persist();
+    }
+  } catch(e) {}
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -2086,4 +2125,6 @@ if (S.theme && S.theme !== 'system') {
 }
 render();
 updateSaveChip();
+ensurePersistentStorage();
+setInterval(updateSaveChip, 60000); // keep "exported N minutes ago" fresh
 </script>

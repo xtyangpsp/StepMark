@@ -1,3 +1,7 @@
+v1.6.1:
+1. Improved export reminder with more information in the export banner
+2. Label browser data for the tracker as persistent to avoid being unexpectedly removed/cleared by the system.
+
 v1.6.0:
 1. Added user manual and links in the app.
 2. Updated README.
